@@ -8,9 +8,7 @@
     "build": "vite build",
     "preview": "vite preview --port 4173"
   },
-  "engines": {
-    "node": ">=18"
-  },
+  "engines": { "node": ">=18" },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -18,6 +16,7 @@
     "@react-three/fiber": "^8.15.16",
     "@react-three/drei": "^9.103.0",
     "@react-three/postprocessing": "^2.16.6",
+    "postprocessing": "^6.36.2",
     "framer-motion": "^11.0.0",
     "lucide-react": "^0.427.0"
   },
