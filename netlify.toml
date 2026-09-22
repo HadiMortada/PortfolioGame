@@ -1,4 +1,5 @@
 [build]
+  command = "echo 'Static Jev Runner: no Vite build required'"
   publish = "blind-cube-jev"
   functions = "netlify/functions"
 
