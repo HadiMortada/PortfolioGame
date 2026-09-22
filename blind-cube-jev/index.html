@@ -3,189 +3,273 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07090d">
-<title>Jev Decision Lab</title>
+<meta name="theme-color" content="#08090d">
+<title>Jev Runner</title>
 <style>
-:root{color-scheme:dark;--bg:#07090d;--panel:#10131a;--panel2:#161a24;--line:#29303c;--text:#f7f8fb;--muted:#9aa3b2;--accent:#7c3aed;--accent2:#a78bfa;--ok:#3ddc8a;--bad:#ff7070;--warn:#f5c451}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,#1e1630 0,#0b0d12 36%,#06070a 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{min-height:100vh}.app{max-width:1040px;margin:auto;padding:15px 12px 28px}
-.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a895e8}.title{font-size:24px;font-weight:850;letter-spacing:-.03em;margin-top:2px}.sub{font-size:12px;color:var(--muted);line-height:1.5;margin-top:5px;max-width:660px}.badge{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:#0d1016;white-space:nowrap}.badge.live{border-color:#246d48;background:#0d1c14;color:#8cf2b6}
-.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:11px}.card{border:1px solid var(--line);border-radius:20px;background:rgba(16,19,26,.93);padding:13px}.card h2{font-size:13px;margin:0 0 9px;color:#d7dbe4}.controls{display:flex;flex-wrap:wrap;gap:8px}button,select,input{font:inherit}button,select,input{min-height:44px;border:1px solid var(--line);background:#11151d;color:var(--text);border-radius:12px;padding:0 12px}button{cursor:pointer}button.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#8b5cf6;font-weight:750}button:disabled{opacity:.4;cursor:not-allowed}.connect{display:grid;grid-template-columns:1fr auto;gap:7px}.connect input{min-width:0;width:100%;font-size:16px}.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:8px}
-.policy{padding:11px;border-radius:14px;background:#0c0f15;border:1px solid #252c38;font-size:12px;line-height:1.55}.policy b{color:#fff}.policy ol{margin:7px 0 0;padding-left:19px}.hero{margin-top:11px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,rgba(22,26,36,.98),rgba(11,13,19,.98));overflow:hidden}.hero-head{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:13px;border-bottom:1px solid var(--line)}.hero-title{font-size:13px;font-weight:700}.status{font-size:11px;color:var(--muted)}.arena{padding:12px;min-height:260px}.candidate-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-height:320px;overflow:auto;padding-right:2px}.candidate{position:relative;border:1px solid #28303d;background:#0d1118;border-radius:13px;padding:9px;min-height:82px;transition:.18s ease}.candidate .id{font-size:10px;color:#7e8795}.candidate .sev{font-size:15px;font-weight:800;margin-top:2px}.candidate .meta{font-size:10px;color:#aab2bf;line-height:1.4;margin-top:3px}.candidate.chosen{border-color:#8b5cf6;box-shadow:0 0 0 1px #8b5cf6,0 0 22px #7c3aed33;background:#161126}.candidate.correct::after{content:"ORACLE";position:absolute;right:6px;top:6px;font-size:8px;color:#8cf2b6;border:1px solid #296c49;border-radius:999px;padding:2px 5px}.candidate.wrong{border-color:#813a44}.hidden-truth{display:none}
-.results{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:11px}.metric{border:1px solid var(--line);border-radius:15px;background:#0d1016;padding:10px}.metric .k{font-size:10px;color:var(--muted)}.metric .v{font-size:21px;font-weight:850;letter-spacing:-.03em;margin-top:3px}.metric .s{font-size:10px;color:#7f8896;margin-top:2px}
-.barbox{margin-top:10px;display:grid;gap:6px}.barrow{display:grid;grid-template-columns:58px 1fr 40px;gap:7px;align-items:center;font-size:11px}.track{height:7px;background:#252b37;border-radius:999px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#6d28d9,#a78bfa)}.verdict{margin-top:10px;border-radius:14px;padding:10px 11px;font-size:12px;line-height:1.45;background:#0c0f15;border:1px solid var(--line)}.verdict.ok{border-color:#246d48;color:#a7f5c7}.verdict.bad{border-color:#73333c;color:#ffadb4}.session{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.session .metric .v{font-size:17px}.links{margin-top:10px;font-size:11px;color:var(--muted)}.links a{color:#baa5ff}.footer{margin-top:12px;font-size:10px;color:#737c89;text-align:center;line-height:1.5}
-@media(max-width:780px){.grid{grid-template-columns:1fr}.candidate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.results{grid-template-columns:repeat(2,1fr)}}@media(max-width:390px){.app{padding:10px}.title{font-size:21px}.candidate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.candidate{min-height:88px}.results{grid-template-columns:repeat(2,1fr)}}
+:root{color-scheme:dark;--bg:#08090d;--panel:#11141b;--panel2:#171b24;--line:#29303c;--text:#f7f8fb;--muted:#9aa3b2;--accent:#7c3aed;--ok:#42da8b;--bad:#ff7474;--warn:#f3c95d}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,#211832 0,#0b0d12 36%,#06070a 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:12px 10px 28px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#ab98e8}.title{font-size:21px;font-weight:850;letter-spacing:-.03em;margin-top:2px}.sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:650px}.badge{font-size:10px;padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:#0d1016;white-space:nowrap}.badge.live{border-color:#246d48;background:#0d1b14;color:#94f2bc}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:10px}.game-card,.panel{border:1px solid var(--line);border-radius:20px;background:rgba(16,19,26,.94);overflow:hidden}.hud{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}.hud-left,.hud-right{display:flex;align-items:center;gap:10px}.score{font-weight:800;font-size:16px}.small{font-size:10px;color:var(--muted)}.hearts{font-size:17px;letter-spacing:2px}.game-wrap{padding:10px}.canvas-wrap{position:relative;border-radius:17px;overflow:hidden;border:1px solid #262d38;background:#11151b;touch-action:none}.canvas-wrap canvas{display:block;width:100%;height:auto;aspect-ratio:3/4}.game-message{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:190px;text-align:center;padding:14px;border-radius:15px;background:rgba(7,9,13,.86);backdrop-filter:blur(8px);border:1px solid #ffffff18;font-size:13px}.game-message.hidden{display:none}.controls{display:flex;flex-wrap:wrap;gap:7px;padding-top:9px}button,select,input{font:inherit}button,input{min-height:44px;border:1px solid var(--line);background:#11151d;color:var(--text);border-radius:12px;padding:0 12px}button{cursor:pointer}button.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#8b5cf6;font-weight:750}button.good{border-color:#246d48;color:#9cf3c1;background:#0e1d15}button:disabled{opacity:.42;cursor:not-allowed}.goal-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px;border-top:1px solid var(--line)}.goal{font-size:11px;line-height:1.25}.goal.active{border-color:#8b5cf6;background:#171126}.panel{padding:12px}.panel h2{font-size:12px;margin:0 0 8px;color:#dfe3ea}.connect{display:grid;grid-template-columns:1fr auto;gap:7px}.connect input{min-width:0;width:100%;font-size:16px}.note{font-size:10px;line-height:1.5;color:var(--muted);margin-top:7px}.debug{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}.scene{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.lane{border:1px solid #28303d;border-radius:12px;padding:8px;text-align:center;background:#0c0f15}.lane .name{font-size:9px;color:#7f8896;text-transform:uppercase}.lane .obj{font-size:27px;margin-top:4px}.lane .type{font-size:10px;color:#bbc2cc;margin-top:2px}.decision{margin-top:10px;padding:10px;border-radius:14px;border:1px solid #2b3240;background:#0c0f15}.action{font-size:28px;font-weight:900;letter-spacing:-.04em}.meta{font-size:10px;color:var(--muted);line-height:1.45;margin-top:3px}.bars{display:grid;gap:6px;margin-top:8px}.bar{display:grid;grid-template-columns:54px 1fr 38px;gap:6px;align-items:center;font-size:10px}.track{height:7px;background:#252b37;border-radius:999px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#6d28d9,#a78bfa)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.stat{border:1px solid #28303d;border-radius:12px;padding:8px;background:#0c0f15}.stat .k{font-size:9px;color:var(--muted)}.stat .v{font-size:16px;font-weight:800;margin-top:2px}.links{margin-top:10px;font-size:10px;color:var(--muted)}.links a{color:#baa6ff}.truth{margin-top:10px;font-size:10px;color:#7e8794;line-height:1.45;border-top:1px solid var(--line);padding-top:9px}
+@media(max-width:780px){.layout{grid-template-columns:1fr}.panel{overflow:visible}}@media(max-width:390px){.app{padding:9px}.title{font-size:19px}.hud{padding:9px}.goal-row{padding:9px}.panel{padding:10px}}
 </style>
 </head>
 <body>
 <div class="app">
-  <header class="top">
-    <div>
-      <div class="eyebrow">Controlled one-shot benchmark</div>
-      <div class="title">Jev Decision Lab</div>
-      <div class="sub">A scientifically cleaner test of Jev: one structured decision, up to 255 choices, an exact local oracle, and measured latency + accuracy. The oracle answer is never sent to Jev.</div>
-    </div>
-    <div id="badge" class="badge">Jev offline</div>
-  </header>
-
-  <div class="grid">
-    <section class="card">
-      <h2>Experiment controls</h2>
-      <div class="controls">
-        <select id="count" aria-label="Candidate count">
-          <option value="16">16 choices</option>
-          <option value="64">64 choices</option>
-          <option value="128">128 choices</option>
-          <option value="255" selected>255 choices</option>
-        </select>
-        <select id="difficulty" aria-label="Difficulty">
-          <option value="normal">Normal ties</option>
-          <option value="close" selected>Close-call ties</option>
-        </select>
-        <button id="generate">New challenge</button>
-        <button id="run" class="primary" disabled>Run Jev once</button>
-        <button id="batch" disabled>Run 5 trials</button>
-      </div>
-      <div class="policy">
-        <b>Exact policy Jev must apply</b>
-        <ol>
-          <li>Choose the incident with the highest severity.</li>
-          <li>If tied, choose the one with the shortest deadline.</li>
-          <li>If still tied, choose the one affecting the most users.</li>
-          <li>If still tied, choose the smallest ticket number.</li>
-        </ol>
-      </div>
-      <div class="note">The browser independently computes the correct answer from the structured fields. It sends Jev only the policy and human-readable candidate descriptions — never the oracle answer.</div>
-    </section>
-
-    <aside class="card">
-      <h2>Real Jev connection</h2>
-      <div class="connect">
-        <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Lolipop AI Gateway API key">
-        <button id="connect">Connect</button>
-      </div>
-      <div id="connectText" class="note">Uses real <b>typesafe/jev-latest</b>. Key stays only in this page's memory and is proxied through Supabase.</div>
-      <div class="session">
-        <div class="metric"><div class="k">Trials</div><div id="trials" class="v">0</div></div>
-        <div class="metric"><div class="k">Accuracy</div><div id="accuracy" class="v">—</div></div>
-        <div class="metric"><div class="k">Avg latency</div><div id="avgLatency" class="v">—</div></div>
-      </div>
-      <div class="links"><a href="./cube-stress-test.html">Open the old Rubik stress test</a></div>
-    </aside>
+<header class="top">
+  <div>
+    <div class="eyebrow">Real Jev game control</div>
+    <div class="title">Jev Runner</div>
+    <div class="sub">A 3-lane runner controlled by real <b>typesafe/jev-latest</b>. The game sends the upcoming lane state early, Jev chooses LEFT / CENTER / RIGHT, and the player steers smoothly before the collision point.</div>
   </div>
+  <div id="badge" class="badge">Jev offline</div>
+</header>
 
-  <section class="hero">
-    <div class="hero-head">
-      <div class="hero-title"><span id="arenaCount">255</span> candidate incidents</div>
-      <div id="arenaStatus" class="status">Ground truth hidden until Jev answers</div>
+<div class="layout">
+  <section class="game-card">
+    <div class="hud">
+      <div class="hud-left"><div><div class="small">SCORE</div><div id="score" class="score">0</div></div><div><div class="small">WAVE</div><div id="waveNum" class="score">0</div></div></div>
+      <div class="hud-right"><div><div class="small">LIVES</div><div id="hearts" class="hearts">❤️❤️❤️</div></div></div>
     </div>
-    <div class="arena">
-      <div id="candidateGrid" class="candidate-grid"></div>
-      <div class="results">
-        <div class="metric"><div class="k">Jev latency</div><div id="latency" class="v">—</div><div class="s">gateway → Jev → gateway</div></div>
-        <div class="metric"><div class="k">Browser roundtrip</div><div id="roundtrip" class="v">—</div><div class="s">phone → proxy → Jev → phone</div></div>
-        <div class="metric"><div class="k">Confidence</div><div id="confidence" class="v">—</div><div class="s">choice-distribution confidence</div></div>
-        <div class="metric"><div class="k">Input tokens</div><div id="tokens" class="v">—</div><div class="s">reported by gateway</div></div>
+    <div class="game-wrap">
+      <div class="canvas-wrap">
+        <canvas id="game" width="720" height="960"></canvas>
+        <div id="message" class="game-message">Connect Jev, then press <b>Start Jev Drive</b>.</div>
       </div>
-      <div id="verdict" class="verdict">Generate a challenge, connect Jev, then run one decision.</div>
-      <div id="bars" class="barbox"></div>
+      <div class="controls">
+        <button id="start" class="primary" disabled>Start Jev Drive</button>
+        <button id="pause" disabled>Pause</button>
+        <button id="restart">Restart</button>
+        <button id="left">← Left</button>
+        <button id="center">Center</button>
+        <button id="right">Right →</button>
+      </div>
+    </div>
+    <div class="goal-row">
+      <button id="goalFruit" class="goal active">🍎 Eat fruit<br><span class="small">avoid animals</span></button>
+      <button id="goalAnimal" class="goal">🐷 Eat animals<br><span class="small">avoid fruit</span></button>
     </div>
   </section>
 
-  <div class="footer">This benchmark measures Jev on the kind of task it is designed for: a single typed high-cardinality decision. It does not measure general planning, Rubik search, or chain-of-thought reasoning.</div>
+  <aside class="panel">
+    <h2>Real Jev connection</h2>
+    <div class="connect">
+      <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Lolipop AI Gateway API key">
+      <button id="connect">Connect</button>
+    </div>
+    <div id="connectText" class="note">The API key stays in page memory only. This game uses the real Jev API, not the local “Jev-like” model from the LinkedIn video.</div>
+
+    <div class="debug">
+      <h2>Upcoming scene</h2>
+      <div class="scene">
+        <div class="lane"><div class="name">Left</div><div id="leftObj" class="obj">—</div><div id="leftType" class="type">empty</div></div>
+        <div class="lane"><div class="name">Center</div><div id="centerObj" class="obj">—</div><div id="centerType" class="type">empty</div></div>
+        <div class="lane"><div class="name">Right</div><div id="rightObj" class="obj">—</div><div id="rightType" class="type">empty</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="small">JEV ACTION</div>
+        <div id="action" class="action">—</div>
+        <div id="decisionMeta" class="meta">No decision yet.</div>
+        <div id="bars" class="bars"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Jev latency</div><div id="latency" class="v">—</div></div>
+        <div class="stat"><div class="k">Accuracy</div><div id="accuracy" class="v">—</div></div>
+        <div class="stat"><div class="k">Late calls</div><div id="late" class="v">0</div></div>
+      </div>
+    </div>
+
+    <div class="truth">Perception here is intentionally <b>symbolic</b>: the game already knows whether each lane contains fruit, animal, or empty. That isolates Jev's decision-making. The LinkedIn video instead used an on-device VLM to perceive the pixels before code chose the action.</div>
+    <div class="links"><a href="./decision-lab.html">Decision Lab</a> · <a href="./cube-stress-test.html">Rubik stress test</a></div>
+  </aside>
+</div>
 </div>
 
 <script>
 const API_URL="https://gxxgicxsfuivqyjenvaw.supabase.co/functions/v1/blind-cube-jev-api";
 const $=s=>document.querySelector(s);
+const canvas=$("#game"),ctx=canvas.getContext("2d");
+
 let apiKey="";
-let incidents=[];
-let oracleIndex=-1;
-let stats={trials:0,correct:0,latencies:[]};
+let running=false,paused=false,gameOver=false;
+let score=0,lives=3,wave=0;
+let playerLane=1,targetLane=1,playerX=0;
+let goal="fruit";
+let activeWave=null;
+let lastTs=0;
+let accuracy={total:0,correct:0};
+let lateCalls=0;
+let decisionSeq=0;
 
-const policy="Rank incidents lexicographically: (1) highest severity wins; (2) if tied, shortest deadline_minutes wins; (3) if still tied, highest affected_users wins; (4) if still tied, smallest ticket_number wins.";
+const fruits=["🍎","🍓","🥝","🍊","🍇","🥑"];
+const animals=["🐷","🐒","🐶","🐼","🐯","🐸"];
+const laneNames=["left","center","right"];
 
-function rnd(max){if(crypto?.getRandomValues){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}return Math.floor(Math.random()*max)}
-function compare(a,b){if(a.severity!==b.severity)return b.severity-a.severity;if(a.deadline!==b.deadline)return a.deadline-b.deadline;if(a.users!==b.users)return b.users-a.users;return a.ticket-b.ticket}
-function generate(){
-  const n=parseInt($("#count").value,10)||255;
-  const close=$("#difficulty").value==="close";
-  incidents=[];
-  for(let i=0;i<n;i++){
-    const severity=close?4+rnd(2):1+rnd(5);
-    const deadline=close?5+rnd(16):5+rnd(116);
-    const users=close?500+rnd(1501):10+rnd(9991);
-    incidents.push({id:"c"+i,ticket:1000+i,severity,deadline,users});
-  }
-  const ranked=[...incidents].sort(compare);
-  oracleIndex=incidents.indexOf(ranked[0]);
-  $("#arenaCount").textContent=String(n);
-  $("#arenaStatus").textContent="Ground truth hidden until Jev answers";
-  $("#latency").textContent=$("#roundtrip").textContent=$("#confidence").textContent=$("#tokens").textContent="—";
-  $("#verdict").className="verdict";
-  $("#verdict").textContent="Ready. Jev will receive "+n+" candidate descriptions in one decision.";
-  $("#bars").innerHTML="";
-  renderCandidates();
+function rnd(n){if(crypto?.getRandomValues){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n}return Math.floor(Math.random()*n)}
+function randomItem(){
+  const r=rnd(100);
+  if(r<42)return{type:"fruit",emoji:fruits[rnd(fruits.length)]};
+  if(r<84)return{type:"animal",emoji:animals[rnd(animals.length)]};
+  return{type:"empty",emoji:""};
 }
-function renderCandidates(chosen=-1,reveal=false){
-  const grid=$("#candidateGrid");grid.innerHTML="";
-  incidents.forEach((x,i)=>{
-    const d=document.createElement("div");d.className="candidate";
-    if(i===chosen)d.classList.add("chosen");
-    if(reveal&&i===oracleIndex)d.classList.add("correct");
-    if(reveal&&chosen===i&&chosen!==oracleIndex)d.classList.add("wrong");
-    d.innerHTML='<div class="id">Ticket #'+x.ticket+'</div><div class="sev">Severity '+x.severity+'</div><div class="meta">'+x.deadline+' min deadline<br>'+x.users.toLocaleString()+' users affected</div>';
-    grid.appendChild(d);
+function makeWave(){
+  let items=[randomItem(),randomItem(),randomItem()];
+  const desired=goal;
+  if(!items.some(x=>x.type===desired))items[rnd(3)]={type:desired,emoji:desired==="fruit"?fruits[rnd(fruits.length)]:animals[rnd(animals.length)]};
+  wave++;
+  $("#waveNum").textContent=wave;
+  return{id:++decisionSeq,y:.06,speed:.21,items,decisionPending:false,decisionDone:false,chosen:null,spawnedAt:performance.now()};
+}
+function laneX(index){return canvas.width*(.2+.3*index)}
+function resizePlayerTarget(){targetLane=Math.max(0,Math.min(2,targetLane))}
+function optimalLane(items){
+  const value=x=>x.type===goal?2:x.type==="empty"?1:0;
+  let best=0,bv=-1;
+  for(let i=0;i<3;i++){const v=value(items[i]);if(v>bv||(v===bv&&i===playerLane)){best=i;bv=v}}
+  return best;
+}
+function updateScenePanel(items){
+  items.forEach((x,i)=>{
+    $("#"+laneNames[i]+"Obj").textContent=x.emoji||"·";
+    $("#"+laneNames[i]+"Type").textContent=x.type;
   });
 }
 async function backend(body){
   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  const j=await r.json().catch(()=>({error:"Invalid response"}));
+  const j=await r.json().catch(()=>({error:"Invalid backend response"}));
   if(!r.ok)throw new Error(j.error+(j.details?" — "+JSON.stringify(j.details):""));
   return j;
 }
+async function requestDecision(w){
+  if(!apiKey||w.decisionPending||w.decisionDone)return;
+  w.decisionPending=true;
+  updateScenePanel(w.items);
+  $("#action").textContent="…";
+  $("#decisionMeta").textContent="Jev is reading the upcoming wave…";
+
+  const scene={
+    currentLane:laneNames[playerLane],
+    lives,
+    score,
+    left:{type:w.items[0].type,distance:Number((.82-w.y).toFixed(2))},
+    center:{type:w.items[1].type,distance:Number((.82-w.y).toFixed(2))},
+    right:{type:w.items[2].type,distance:Number((.82-w.y).toFixed(2))}
+  };
+  const requestWaveId=w.id;
+  const goalText=goal==="fruit"?"Eat fruit and avoid animals. Empty lanes are safe but score nothing.":"Eat animals and avoid fruit. Empty lanes are safe but score nothing.";
+  const started=performance.now();
+  try{
+    const r=await backend({action:"runner",apiKey,scene,goal:goalText});
+    const round=Math.round(performance.now()-started);
+    if(!activeWave||activeWave.id!==requestWaveId){lateCalls++;$("#late").textContent=lateCalls;return}
+    const idx=laneNames.indexOf(r.action);
+    if(idx>=0){w.chosen=idx;targetLane=idx;resizePlayerTarget()}
+    w.decisionDone=true;
+    $("#action").textContent=(r.action||"—").toUpperCase();
+    const conf=typeof r.confidence==="number"?(r.confidence*100).toFixed(1)+"%":"—";
+    $("#decisionMeta").textContent="typesafe/jev-latest · "+r.latencyMs+" ms model/gateway · "+round+" ms phone roundtrip · confidence "+conf;
+    $("#latency").textContent=r.latencyMs+" ms";
+    renderBars(r.probabilities||{});
+    const oracle=optimalLane(w.items);
+    accuracy.total++;
+    if(idx===oracle)accuracy.correct++;
+    $("#accuracy").textContent=Math.round(accuracy.correct/accuracy.total*100)+"%";
+  }catch(e){
+    $("#action").textContent="ERR";
+    $("#decisionMeta").textContent="Jev error: "+e.message;
+  }finally{w.decisionPending=false}
+}
+function renderBars(probs){
+  $("#bars").innerHTML="";
+  const arr=Object.entries(probs).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,3);
+  arr.forEach(([name,val])=>{
+    const p=Math.max(0,Math.min(1,Number(val)||0));
+    const row=document.createElement("div");row.className="bar";
+    row.innerHTML='<div>'+name.toUpperCase()+'</div><div class="track"><div class="fill" style="width:'+(p*100).toFixed(1)+'%"></div></div><div>'+(p*100).toFixed(0)+'%</div>';
+    $("#bars").appendChild(row);
+  });
+}
+function resolveWave(w){
+  const item=w.items[playerLane];
+  if(item.type===goal){score+=10}
+  else if(item.type==="empty"){score+=0}
+  else{lives--;score=Math.max(0,score-5)}
+  $("#score").textContent=score;
+  $("#hearts").textContent="❤️".repeat(Math.max(0,lives))+"🖤".repeat(Math.max(0,3-lives));
+  if(lives<=0){gameOver=true;running=false;$("#message").classList.remove("hidden");$("#message").innerHTML="<b>Game over</b><br>Score "+score+"<br><span class='small'>Press Restart to try again.</span>";$("#start").disabled=true;$("#pause").disabled=true}
+}
+function reset(){
+  running=false;paused=false;gameOver=false;score=0;lives=3;wave=0;playerLane=1;targetLane=1;playerX=laneX(1);activeWave=null;lastTs=0;accuracy={total:0,correct:0};lateCalls=0;decisionSeq=0;
+  $("#score").textContent="0";$("#waveNum").textContent="0";$("#hearts").textContent="❤️❤️❤️";$("#accuracy").textContent="—";$("#late").textContent="0";$("#latency").textContent="—";$("#action").textContent="—";$("#decisionMeta").textContent="No decision yet.";$("#bars").innerHTML="";updateScenePanel([{type:"empty",emoji:""},{type:"empty",emoji:""},{type:"empty",emoji:""}]);
+  $("#message").classList.remove("hidden");$("#message").innerHTML=apiKey?"Press <b>Start Jev Drive</b>.":"Connect Jev, then press <b>Start Jev Drive</b>.";
+  $("#start").disabled=!apiKey;$("#pause").disabled=true;draw();
+}
+function start(){
+  if(!apiKey||gameOver)return;
+  running=true;paused=false;$("#message").classList.add("hidden");$("#start").disabled=true;$("#pause").disabled=false;$("#pause").textContent="Pause";
+  if(!activeWave){activeWave=makeWave();requestDecision(activeWave)}
+  requestAnimationFrame(loop);
+}
+function togglePause(){
+  if(!running)return;
+  paused=!paused;$("#pause").textContent=paused?"Resume":"Pause";if(!paused){lastTs=0;requestAnimationFrame(loop)}
+}
+function setGoal(g){
+  goal=g;$("#goalFruit").classList.toggle("active",g==="fruit");$("#goalAnimal").classList.toggle("active",g==="animal");
+  if(activeWave&&!activeWave.decisionDone&&!activeWave.decisionPending)requestDecision(activeWave);
+}
+function moveManual(i){targetLane=i;playerLane=i;resizePlayerTarget()}
+function loop(ts){
+  if(!running||paused||gameOver)return;
+  if(!lastTs)lastTs=ts;
+  const dt=Math.min(.05,(ts-lastTs)/1000);lastTs=ts;
+  const targetX=laneX(targetLane);playerX+=(targetX-playerX)*Math.min(1,dt*9);
+  if(Math.abs(playerX-targetX)<3){playerX=targetX;playerLane=targetLane}
+  if(activeWave){
+    activeWave.y+=activeWave.speed*dt;
+    if(!activeWave.decisionDone&&!activeWave.decisionPending&&activeWave.y<.33)requestDecision(activeWave);
+    if(activeWave.y>=.82){
+      resolveWave(activeWave);
+      if(!gameOver){activeWave=makeWave();requestDecision(activeWave)}
+    }
+  }
+  draw();requestAnimationFrame(loop);
+}
+function draw(){
+  const w=canvas.width,h=canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,"#151a20");grad.addColorStop(1,"#0c0f14");ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+  ctx.fillStyle="#15120e";ctx.beginPath();ctx.moveTo(w*.08,0);ctx.lineTo(w*.92,0);ctx.lineTo(w, h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+  ctx.strokeStyle="#ffffff26";ctx.lineWidth=4;ctx.setLineDash([20,24]);
+  for(let i=1;i<3;i++){const x=w*(.05+.3*i);ctx.beginPath();ctx.moveTo(w*.5+(x-w*.5)*.35,0);ctx.lineTo(x,h);ctx.stroke()}
+  ctx.setLineDash([]);
+  ctx.strokeStyle="#ffffff0f";ctx.lineWidth=2;
+  for(let y=80;y<h;y+=130){ctx.beginPath();ctx.moveTo(w*.05,y);ctx.lineTo(w*.95,y);ctx.stroke()}
+  if(activeWave){
+    const y=activeWave.y*h;
+    activeWave.items.forEach((it,i)=>{
+      const x=laneX(i);
+      if(it.type!=="empty"){ctx.font="68px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(it.emoji,x,y)}
+      else{ctx.fillStyle="#ffffff0c";ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);ctx.fill()}
+    });
+  }
+  const py=h*.83;
+  ctx.shadowColor="#7c3aed";ctx.shadowBlur=24;ctx.fillStyle="#e34b55";ctx.beginPath();ctx.arc(playerX||laneX(1),py,34,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle="#fff";ctx.font="bold 18px system-ui";ctx.textAlign="center";ctx.fillText("J",playerX||laneX(1),py+6);
+  ctx.fillStyle="#ffffff88";ctx.font="16px system-ui";ctx.fillText(goal==="fruit"?"GOAL: FRUIT":"GOAL: ANIMALS",w/2,36);
+}
+
 $("#connect").onclick=async()=>{
   const k=$("#apiKey").value.trim();if(!k)return $("#connectText").textContent="Paste your Lolipop API key first.";
-  $("#connect").disabled=true;$("#connectText").textContent="Checking Jev…";
-  try{await backend({action:"connect",apiKey:k});apiKey=k;$("#apiKey").value="";$("#badge").textContent="Jev Live";$("#badge").className="badge live";$("#run").disabled=false;$("#batch").disabled=false;$("#connectText").textContent="Connected to real typesafe/jev-latest."}
+  $("#connect").disabled=true;$("#connectText").textContent="Connecting to real Jev…";
+  try{await backend({action:"connect",apiKey:k});apiKey=k;$("#apiKey").value="";$("#badge").textContent="Jev Live";$("#badge").className="badge live";$("#connectText").textContent="Connected to real typesafe/jev-latest.";$("#start").disabled=false;$("#message").innerHTML="Press <b>Start Jev Drive</b>."}
   catch(e){apiKey="";$("#connectText").textContent="Connection failed: "+e.message}
   $("#connect").disabled=false;
 };
-function optionPayload(){
-  return Object.fromEntries(incidents.map((x,i)=>["c"+i,"Ticket #"+x.ticket+": severity="+x.severity+", deadline_minutes="+x.deadline+", affected_users="+x.users]));
-}
-async function runOnce(silent=false){
-  if(!apiKey||!incidents.length)return false;
-  $("#run").disabled=true;$("#batch").disabled=true;
-  $("#arenaStatus").textContent="Jev deciding across "+incidents.length+" choices…";
-  const start=performance.now();
-  try{
-    const r=await backend({action:"benchmark",apiKey,policy,options:optionPayload()});
-    const round=Math.round(performance.now()-start);
-    const idx=Number(String(r.choice).replace(/^c/,""));
-    const correct=idx===oracleIndex;
-    renderCandidates(idx,true);
-    $("#arenaStatus").textContent="Decision complete";
-    $("#latency").textContent=r.latencyMs+" ms";
-    $("#roundtrip").textContent=round+" ms";
-    $("#confidence").textContent=typeof r.confidence==="number"?(r.confidence*100).toFixed(1)+"%":"—";
-    $("#tokens").textContent=r.usage?.input_tokens??"—";
-    $("#verdict").className="verdict "+(correct?"ok":"bad");
-    const jev=incidents[idx],truth=incidents[oracleIndex];
-    $("#verdict").innerHTML=(correct?"✓ CORRECT":"✕ INCORRECT")+" — Jev chose Ticket #"+(jev?.ticket??"?")+". Oracle: Ticket #"+truth.ticket+".";
-    renderBars(r.probabilities||{});
-    stats.trials++;if(correct)stats.correct++;stats.latencies.push(r.latencyMs);updateStats();
-    return correct;
-  }catch(e){$("#verdict").className="verdict bad";$("#verdict").textContent="Jev error: "+e.message;return false}
-  finally{$("#run").disabled=false;$("#batch").disabled=false}
-}
-function renderBars(probs){
-  const arr=Object.entries(probs).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,5);$("#bars").innerHTML="";
-  arr.forEach(([id,v])=>{const i=Number(id.replace(/^c/,"")),p=Math.max(0,Math.min(1,Number(v)||0)),x=incidents[i];const row=document.createElement("div");row.className="barrow";row.innerHTML='<div>#'+(x?.ticket??id)+'</div><div class="track"><div class="fill" style="width:'+(p*100).toFixed(1)+'%"></div></div><div>'+(p*100).toFixed(0)+'%</div>';$("#bars").appendChild(row)});
-}
-function updateStats(){$("#trials").textContent=stats.trials;$("#accuracy").textContent=stats.trials?Math.round(stats.correct/stats.trials*100)+"%":"—";$("#avgLatency").textContent=stats.latencies.length?Math.round(stats.latencies.reduce((a,b)=>a+b,0)/stats.latencies.length)+" ms":"—"}
-$("#generate").onclick=generate;$("#count").onchange=generate;$("#difficulty").onchange=generate;$("#run").onclick=()=>runOnce();
-$("#batch").onclick=async()=>{if(!apiKey)return;$("#batch").disabled=true;for(let i=0;i<5;i++){generate();await runOnce(true)}$("#batch").disabled=false};
-generate();
+$("#start").onclick=start;$("#pause").onclick=togglePause;$("#restart").onclick=reset;$("#left").onclick=()=>moveManual(0);$("#center").onclick=()=>moveManual(1);$("#right").onclick=()=>moveManual(2);$("#goalFruit").onclick=()=>setGoal("fruit");$("#goalAnimal").onclick=()=>setGoal("animal");
+window.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")moveManual(Math.max(0,targetLane-1));if(e.key==="ArrowRight")moveManual(Math.min(2,targetLane+1))});
+reset();
 </script>
 </body>
 </html>
