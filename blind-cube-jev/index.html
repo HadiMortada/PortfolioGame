@@ -3,626 +3,353 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07090d">
-<title>Blind Cube — Jev Challenge</title>
+<meta name="theme-color" content="#08090d">
+<title>Jev Decision Lab</title>
 <style>
-:root{color-scheme:dark;--bg:#07090d;--panel:#10131a;--panel2:#161a24;--line:#29303c;--text:#f7f8fb;--muted:#9ca3af;--accent:#7c3aed;--accent2:#9f7aea;--ok:#35d07f;--bad:#ff7070}
-*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 50% 15%,#171225 0,#0a0c12 38%,#050609 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100%}
-body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}.title{font-size:18px;font-weight:800;letter-spacing:-.02em}.subtitle{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}.badge{font-size:11px;padding:6px 9px;border-radius:999px;border:1px solid var(--line);background:#0d1016;color:#c9ced8;white-space:nowrap}.badge.live{border-color:#236a45;background:#0d1b14;color:#8ef0b7}
-.stage{position:relative;height:min(67vw,560px);min-height:330px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:radial-gradient(circle at 50% 42%,#1a1e2a 0,#0b0e14 68%,#08090d 100%);touch-action:none}
-.stage canvas{display:block;width:100%;height:100%}.hint,.stat{position:absolute;background:rgba(10,12,18,.76);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:7px 9px;font-size:11px;color:#cdd3dc}.hint{left:10px;top:10px}.stats{position:absolute;left:10px;right:10px;bottom:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
-.controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}button,select,input{font:inherit}button,select{min-height:44px;border:1px solid var(--line);background:#12151d;color:var(--text);border-radius:12px;padding:0 13px}button{cursor:pointer}button.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#8b5cf6;font-weight:750}button.success{background:#10251a;border-color:#2d7650;color:#9bf1bd}button:disabled{opacity:.4;cursor:not-allowed}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:11px;margin-top:11px}.card{border:1px solid var(--line);border-radius:18px;background:rgba(16,19,26,.92);padding:12px}.section-title{font-size:12px;color:var(--muted);margin-bottom:8px}.moves{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}.moves button{min-height:42px;padding:0 6px;font-size:12px}
-.cred{display:grid;grid-template-columns:1fr;gap:7px}.cred input{width:100%;height:44px;border:1px solid var(--line);background:#0b0e14;color:#fff;border-radius:12px;padding:0 11px;font-size:16px;outline:none}.cred input:focus{border-color:#7651d8}.connect-row{display:grid;grid-template-columns:1fr auto;gap:7px}
-.note{font-size:11px;line-height:1.5;color:var(--muted);margin-top:7px}.solver-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.decision{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.jev-move{font-size:30px;font-weight:900;letter-spacing:-.04em}.meta{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}.bars{display:grid;gap:6px;margin-top:9px}.bar{display:grid;grid-template-columns:56px 1fr 42px;gap:7px;align-items:center;font-size:11px}.track{height:7px;background:#252a36;border-radius:999px;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6d28d9,#a78bfa)}.history{font-size:11px;line-height:1.5;color:var(--muted);margin-top:10px}.ok{color:#8df0b7}.err{color:#ff9292}.privacy{margin-top:10px;border-top:1px solid var(--line);padding-top:9px;font-size:10px;color:#7f8794;line-height:1.5}
-.help{margin-top:10px;padding:10px;border:1px dashed #343b49;border-radius:12px;font-size:11px;color:#aeb5c0;line-height:1.5}.help a{color:#b9a0ff}.foot{font-size:10px;color:#777f8c;text-align:center;line-height:1.45;margin-top:12px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}.stage{height:430px}.moves{grid-template-columns:repeat(6,1fr)}}@media(max-width:400px){.app{padding:10px}.stage{height:360px;min-height:320px}.title{font-size:16px}.badge{font-size:10px;padding:6px 8px}.moves{grid-template-columns:repeat(6,1fr)}}
+:root{color-scheme:dark;--bg:#08090d;--panel:#11141c;--panel2:#171b25;--line:#2a3140;--text:#f6f7fb;--muted:#9ca4b2;--accent:#8b5cf6;--accent2:#a78bfa;--ok:#39d98a;--bad:#ff7474;--warn:#f3c75f}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 0,#171329 0,#0b0d13 40%,#06070a 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}.app{max-width:1050px;margin:auto;padding:14px 12px 30px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.title{font-size:20px;font-weight:850;letter-spacing:-.03em}.sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}.badge{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:#0d1016;white-space:nowrap}.badge.live{border-color:#276f4a;background:#0d1b14;color:#92f2ba}
+.hero{margin-top:12px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,rgba(22,25,35,.96),rgba(13,15,21,.96));padding:14px}.hero h2{margin:0;font-size:16px}.hero p{margin:7px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px;margin-top:12px}.card{border:1px solid var(--line);border-radius:18px;background:rgba(16,19,27,.94);padding:13px}.label{font-size:11px;color:var(--muted);margin-bottom:7px}.controls{display:flex;flex-wrap:wrap;gap:8px}button,select,input{font:inherit}button,select{min-height:44px;border-radius:12px;border:1px solid var(--line);background:#121620;color:var(--text);padding:0 13px}button{cursor:pointer}button.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#8b5cf6;font-weight:750}button:disabled{opacity:.42;cursor:not-allowed}input{height:44px;width:100%;border-radius:12px;border:1px solid var(--line);background:#0b0e14;color:#fff;padding:0 11px;font-size:16px;outline:none}.connect{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}.note{font-size:10px;color:#7f8794;line-height:1.5;margin-top:7px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}.metric{border:1px solid var(--line);border-radius:15px;background:#0f1219;padding:10px}.metric .k{font-size:10px;color:var(--muted)}.metric .v{font-size:22px;font-weight:850;letter-spacing:-.03em;margin-top:3px}.metric .s{font-size:10px;color:#7f8794;margin-top:2px}
+.policy{margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:11px;background:#0d1017;font-size:12px;line-height:1.55}.policy strong{color:#d9ccff}.status{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}.status.ok{color:#8ff0ba}.status.bad{color:#ff9696}
+.signal-wrap{margin-top:12px}.signal-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}.signal-title{font-size:12px;color:var(--muted)}.seed{font-size:10px;color:#747d8b}.signals{display:grid;grid-template-columns:repeat(auto-fill,minmax(29px,1fr));gap:5px}.signal{aspect-ratio:1;border:1px solid #252c38;border-radius:8px;background:#11151e;color:#707989;font-size:9px;display:flex;align-items:center;justify-content:center;transition:.16s transform,.16s border-color,.16s background,.16s color}.signal.jev{border-color:#9f7aea;background:#2c194e;color:#e7ddff;transform:translateY(-1px)}.signal.oracle{box-shadow:inset 0 0 0 2px var(--ok);color:#dffbec}.signal.correct{background:#10301f;border-color:#39d98a;color:#b9f6d3;box-shadow:0 0 22px rgba(57,217,138,.12)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pick{border:1px solid var(--line);border-radius:14px;padding:10px;background:#0d1017}.pick .who{font-size:10px;color:var(--muted)}.pick .id{font-size:22px;font-weight:850;margin-top:2px}.pick .desc{font-size:10px;color:#a5adba;line-height:1.45;margin-top:4px}
+.probs{display:grid;gap:6px;margin-top:10px}.prob{display:grid;grid-template-columns:54px 1fr 42px;gap:7px;align-items:center;font-size:10px}.track{height:7px;border-radius:999px;background:#252a36;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6d28d9,#a78bfa)}
+.controls-card{display:grid;gap:10px}.control-block{border-top:1px solid var(--line);padding-top:10px}.control-block:first-child{border-top:0;padding-top:0}.scientific{font-size:11px;line-height:1.55;color:#a6adba}.scientific b{color:#fff}.sweep{margin-top:10px;overflow:auto;border:1px solid var(--line);border-radius:12px}.sweep table{width:100%;border-collapse:collapse;font-size:10px}.sweep th,.sweep td{padding:8px;border-bottom:1px solid #242a35;text-align:right;white-space:nowrap}.sweep th:first-child,.sweep td:first-child{text-align:left}.sweep tr:last-child td{border-bottom:0}.sweep th{color:#939ba8;font-weight:600;background:#0d1016}
+.footer{margin-top:12px;font-size:10px;color:#757e8c;line-height:1.5;text-align:center}.footer a{color:#b9a0ff}
+@media(max-width:780px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:390px){.app{padding:10px}.title{font-size:18px}.signals{grid-template-columns:repeat(auto-fill,minmax(25px,1fr))}.metric .v{font-size:19px}}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
     <div>
-      <div class="title">Blind Cube — Jev Challenge</div>
-      <div id="status" class="subtitle">Connect Jev, shuffle blindly, then lock the final cube state.</div>
+      <div class="title">Jev Decision Lab</div>
+      <div class="sub">One call. Exact ground truth. No retries. Up to 255 choices.</div>
     </div>
     <div id="badge" class="badge">Jev offline</div>
   </header>
 
-  <section id="stage" class="stage" aria-label="Interactive 3D Rubik cube">
-    <canvas id="canvas"></canvas>
-    <div class="hint">Drag to rotate the view</div>
-    <div class="stats">
-      <div class="stat"><span id="moveCount">0</span> Jev moves</div>
-      <div id="cubeState" class="stat">Solved</div>
-    </div>
+  <section class="hero">
+    <h2>Scientific one-shot benchmark</h2>
+    <p>The browser generates a controlled operations-priority problem with an exact answer. Jev sees the policy and candidate descriptions, but never the answer. It gets exactly one <b>Choice</b> call. We measure whether it picked the correct candidate and how long the real API call took.</p>
   </section>
 
-  <div class="controls">
-    <button id="shuffle" class="primary">Shuffle</button>
-    <select id="scrambleLen" aria-label="Shuffle length">
-      <option value="10">10 moves</option>
-      <option value="20" selected>20 moves</option>
-      <option value="30">30 moves</option>
-    </select>
-    <button id="forget" disabled>Forget shuffle</button>
-    <button id="reset">Reset cube</button>
+  <div class="metrics">
+    <div class="metric"><div class="k">Last gateway latency</div><div id="gatewayMs" class="v">—</div><div class="s">Supabase → Lolipop → Jev → back</div></div>
+    <div class="metric"><div class="k">Browser roundtrip</div><div id="roundtripMs" class="v">—</div><div class="s">phone → backend → phone</div></div>
+    <div class="metric"><div class="k">Session accuracy</div><div id="accuracy" class="v">—</div><div id="accuracySub" class="s">0 measured rounds</div></div>
+    <div class="metric"><div class="k">Last confidence</div><div id="confidence" class="v">—</div><div id="choiceCountMetric" class="s">— choices</div></div>
   </div>
 
   <div class="grid">
-    <section class="card">
-      <div class="section-title">Manual turns</div>
-      <div id="manualMoves" class="moves"></div>
-      <div id="history" class="history">No shuffle exists yet.</div>
-    </section>
+    <main class="card">
+      <div class="controls">
+        <select id="choiceCount" aria-label="Choice count">
+          <option value="16">16 choices</option>
+          <option value="64">64 choices</option>
+          <option value="128">128 choices</option>
+          <option value="255" selected>255 choices</option>
+        </select>
+        <button id="runOne" class="primary" disabled>Run one-shot test</button>
+        <button id="runFive" disabled>Run 5 rounds</button>
+        <button id="sweep" disabled>Run size sweep</button>
+      </div>
 
-    <aside class="card">
-      <div class="section-title">Real Jev — $0 via Lolipop AI Gateway</div>
-      <div class="cred">
-        <div class="connect-row">
-          <input id="apiToken" type="password" autocomplete="off" spellcheck="false" placeholder="Lolipop AI Gateway API key">
-          <button id="connect">Connect</button>
+      <div id="policy" class="policy"><strong>Policy:</strong> Generate a round to see the exact decision rule.</div>
+      <div id="status" class="status">Connect Jev first.</div>
+
+      <div class="signal-wrap">
+        <div class="signal-head">
+          <div class="signal-title">Candidate field</div>
+          <div id="seed" class="seed">seed —</div>
+        </div>
+        <div id="signals" class="signals"></div>
+      </div>
+
+      <div class="compare">
+        <div class="pick">
+          <div class="who">Jev selected</div>
+          <div id="jevPick" class="id">—</div>
+          <div id="jevDesc" class="desc">No result yet.</div>
+        </div>
+        <div class="pick">
+          <div class="who">Exact oracle answer</div>
+          <div id="oraclePick" class="id">—</div>
+          <div id="oracleDesc" class="desc">Computed locally and never sent to Jev.</div>
         </div>
       </div>
-      <div class="note">Your Lolipop API key is kept only in this page's memory and forwarded to the Supabase proxy for each request. It is not written to localStorage or the database.</div>
-      <div class="solver-actions">
-        <button id="step" disabled>Next Jev move</button>
-        <button id="auto" disabled>Jev Macro Solve</button>
+
+      <div id="probs" class="probs"></div>
+
+      <div id="sweepWrap" class="sweep" hidden>
+        <table>
+          <thead><tr><th>Choices</th><th>Correct</th><th>Gateway</th><th>Roundtrip</th><th>Confidence</th></tr></thead>
+          <tbody id="sweepBody"></tbody>
+        </table>
       </div>
-      <div class="solver-actions">
-        <button id="pause" disabled>Pause</button>
-        <select id="speed" aria-label="Solve speed">
-          <option value="800">Normal</option>
-          <option value="300">Fast</option>
-          <option value="0">Turbo</option>
-          <option value="1400">Slow</option>
-        </select>
+    </main>
+
+    <aside class="card controls-card">
+      <div>
+        <div class="label">Real Jev — $0 via Lolipop AI Gateway</div>
+        <div class="connect">
+          <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Lolipop API key">
+          <button id="connect">Connect</button>
+        </div>
+        <div class="note">The key stays only in page memory. It is not stored in localStorage or the database.</div>
       </div>
-      <div class="decision">
-        <div id="jevMove" class="jev-move">—</div>
-        <div id="jevMeta" class="meta">No Jev decision yet.</div>
-        <div id="probabilities" class="bars"></div>
+
+      <div class="control-block scientific">
+        <b>Scientific controls</b><br>
+        • Ground truth is computed in your browser before the request.<br>
+        • The correct candidate ID is never included in the API payload.<br>
+        • Exactly one Jev decision is allowed per measured round.<br>
+        • No retry or second chance is counted as the same round.<br>
+        • Every round exposes its random seed for reproducibility.<br>
+        • Random-choice baseline is shown implicitly as 1/N.
       </div>
-      <div class="help">
-        $0 now: Lolipop AI Gateway is offering <b>typesafe/jev-latest</b> free through September 24, 2026. Create a free account, issue one API key, and paste it above. No coupon is required during the promotion.
+
+      <div class="control-block scientific">
+        <b>What Jev must do</b><br>
+        Read a natural-language priority policy, compare all candidate incidents, apply the ordered tie-break rules, and select one candidate using a single structured <b>Choice</b> response.
+      </div>
+
+      <div class="control-block scientific">
+        <b>Why this fits Jev</b><br>
+        It is a one-shot, high-cardinality decision problem rather than a long sequential search.
       </div>
     </aside>
   </div>
 
-  <div class="privacy">Blind benchmark rule: shuffle moves are generated one-by-one, animated, applied, and immediately discarded — the full scramble sequence is never stored. After <b>Forget shuffle</b>, Jev receives the current 54-sticker cube state. A loop guard may remove only moves that would return to a state Jev already visited; it does not rank moves, use the scramble, or use a Rubik solver.</div>
-  <div class="foot">Macro mode gives real Jev up to 234 legal 1–2 move continuations in a single decision. Jev chooses the macro itself, the cube executes it, and the process repeats from the new state. No scramble history or conventional Rubik solver is used. This tests Jev's high-cardinality decision speed; it does not mathematically guarantee the globally shortest Rubik solution.</div>
+  <div class="footer">
+    The old Rubik experiment is preserved as a separate stress test:
+    <a href="./cube-stress-test.html">open Cube Stress Test</a>.
+  </div>
 </div>
 
 <script type="module">
 const API_URL="https://gxxgicxsfuivqyjenvaw.supabase.co/functions/v1/blind-cube-jev-api";
-const THREE=await import("https://cdn.jsdelivr.net/npm/three@0.180.0/+esm");
 const $=s=>document.querySelector(s);
+let key="",live=false,busy=false;
+const session={rounds:0,correct:0,latencies:[],roundtrips:[]};
 
-const canvas=$("#canvas"),stage=$("#stage");
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(34,1,.1,100);
-camera.position.set(6.7,5.4,7.8);
-camera.lookAt(0,0,0);
-
-scene.add(new THREE.HemisphereLight(0xffffff,0x1d2230,2.4));
-const keyLight=new THREE.DirectionalLight(0xffffff,3.4);keyLight.position.set(5,8,7);scene.add(keyLight);
-const rimLight=new THREE.DirectionalLight(0x7d6cff,1.45);rimLight.position.set(-6,2,-6);scene.add(rimLight);
-
-const cubeRoot=new THREE.Group();
-scene.add(cubeRoot);
-cubeRoot.rotation.x=-.34;
-cubeRoot.rotation.y=.62;
-
-const COLORS={U:0xf4f4f4,D:0xf0d347,F:0x36ad6d,B:0x3d7fd8,R:0xd84c47,L:0xea8c3c,X:0x101218};
-const cubieGeom=new THREE.BoxGeometry(.94,.94,.94);
-const edgeGeom=new THREE.EdgesGeometry(cubieGeom);
-let cubies=[];
-
-function makeMaterial(code){return new THREE.MeshStandardMaterial({color:COLORS[code],roughness:.38,metalness:.045});}
-function materials(x,y,z){
-  return [
-    makeMaterial(x===1?"R":"X"),makeMaterial(x===-1?"L":"X"),
-    makeMaterial(y===1?"U":"X"),makeMaterial(y===-1?"D":"X"),
-    makeMaterial(z===1?"F":"X"),makeMaterial(z===-1?"B":"X")
-  ];
-}
-function addCubie(x,y,z){
-  const mesh=new THREE.Mesh(cubieGeom,materials(x,y,z));
-  mesh.position.set(x*1.03,y*1.03,z*1.03);
-  mesh.userData.coord=[x,y,z];
-  const edges=new THREE.LineSegments(edgeGeom,new THREE.LineBasicMaterial({color:0x030405,transparent:true,opacity:.97}));
-  mesh.add(edges);
-  cubeRoot.add(mesh);
-  cubies.push(mesh);
-}
-function rebuildVisualCube(){
-  cubies.forEach(c=>cubeRoot.remove(c));
-  cubies=[];
-  for(let x=-1;x<=1;x++)for(let y=-1;y<=1;y++)for(let z=-1;z<=1;z++)addCubie(x,y,z);
-}
-function resize(){
-  const r=stage.getBoundingClientRect();
-  renderer.setSize(Math.max(1,r.width),Math.max(1,r.height),false);
-  camera.aspect=r.width/r.height;
-  camera.updateProjectionMatrix();
-}
-new ResizeObserver(resize).observe(stage);resize();
-(function renderLoop(){renderer.render(scene,camera);requestAnimationFrame(renderLoop)})();
-
-let dragging=false,lastX=0,lastY=0;
-stage.addEventListener("pointerdown",e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;stage.setPointerCapture?.(e.pointerId);});
-stage.addEventListener("pointermove",e=>{if(!dragging)return;cubeRoot.rotation.y+=(e.clientX-lastX)*.008;cubeRoot.rotation.x+=(e.clientY-lastY)*.008;lastX=e.clientX;lastY=e.clientY;});
-stage.addEventListener("pointerup",()=>dragging=false);
-stage.addEventListener("pointercancel",()=>dragging=false);
-
-const MOVE_DEF={
-  U:{axis:1,layer:1,sign:-1},D:{axis:1,layer:-1,sign:1},
-  R:{axis:0,layer:1,sign:-1},L:{axis:0,layer:-1,sign:1},
-  F:{axis:2,layer:1,sign:-1},B:{axis:2,layer:-1,sign:1}
+const CATEGORY_LABELS={
+  security:"Credential compromise",
+  outage:"Service outage",
+  billing:"Billing failure",
+  access:"Account access"
 };
-const LEGAL=["U","U'","U2","R","R'","R2","F","F'","F2","D","D'","D2","L","L'","L2","B","B'","B2"];
-const ID_TO_MOVE={U:"U",U_PRIME:"U'",U2:"U2",R:"R",R_PRIME:"R'",R2:"R2",F:"F",F_PRIME:"F'",F2:"F2",D:"D",D_PRIME:"D'",D2:"D2",L:"L",L_PRIME:"L'",L2:"L2",B:"B",B_PRIME:"B'",B2:"B2"};
-const MOVE_TO_ID=Object.fromEntries(Object.entries(ID_TO_MOVE).map(([id,move])=>[move,id]));
 
-function initialStickers(){
-  const s=[];
-  for(let x=-1;x<=1;x++)for(let z=-1;z<=1;z++){s.push({c:"U",p:[x,1,z],n:[0,1,0]});s.push({c:"D",p:[x,-1,z],n:[0,-1,0]});}
-  for(let y=-1;y<=1;y++)for(let z=-1;z<=1;z++){s.push({c:"R",p:[1,y,z],n:[1,0,0]});s.push({c:"L",p:[-1,y,z],n:[-1,0,0]});}
-  for(let x=-1;x<=1;x++)for(let y=-1;y<=1;y++){s.push({c:"F",p:[x,y,1],n:[0,0,1]});s.push({c:"B",p:[x,y,-1],n:[0,0,-1]});}
-  return s;
-}
-function rotateVector(v,axis,sign){
-  const[x,y,z]=v;
-  if(axis===0)return sign===1?[x,-z,y]:[x,z,-y];
-  if(axis===1)return sign===1?[z,y,-x]:[-z,y,x];
-  return sign===1?[-y,x,z]:[y,-x,z];
-}
-function rotateStickerSet(set,face,sign){
-  const d=MOVE_DEF[face];
-  for(const st of set){
-    if(st.p[d.axis]===d.layer){
-      st.p=rotateVector(st.p,d.axis,sign);
-      st.n=rotateVector(st.n,d.axis,sign);
-    }
+const policies=[
+  {
+    text:"First prefer Credential compromise over Service outage over Billing failure over Account access. Within the same type, prefer higher severity, then more affected users, then older age. If still tied, choose the lower incident number.",
+    compare:(a,b)=>cmpChain(
+      rank(["security","outage","billing","access"],a.category),rank(["security","outage","billing","access"],b.category),
+      a.severity,b.severity,a.affected,b.affected,a.age,b.age,-a.index,-b.index
+    )
+  },
+  {
+    text:"First prefer incidents with SLA risk = yes. Then prefer higher severity. Then prefer Service outage over Credential compromise over Account access over Billing failure. Then prefer more affected users, then older age. If still tied, choose the lower incident number.",
+    compare:(a,b)=>cmpChain(
+      +a.sla,+b.sla,a.severity,b.severity,
+      rank(["outage","security","access","billing"],a.category),rank(["outage","security","access","billing"],b.category),
+      a.affected,b.affected,a.age,b.age,-a.index,-b.index
+    )
+  },
+  {
+    text:"First prefer VIP = yes. Then prefer Billing failure over Account access over Service outage over Credential compromise. Then prefer higher severity, then older age, then more affected users. If still tied, choose the lower incident number.",
+    compare:(a,b)=>cmpChain(
+      +a.vip,+b.vip,
+      rank(["billing","access","outage","security"],a.category),rank(["billing","access","outage","security"],b.category),
+      a.severity,b.severity,a.age,b.age,a.affected,b.affected,-a.index,-b.index
+    )
+  },
+  {
+    text:"First prefer higher severity. Then prefer more affected users. Then prefer SLA risk = yes. Then prefer Credential compromise over Service outage over Account access over Billing failure. Then prefer older age. If still tied, choose the lower incident number.",
+    compare:(a,b)=>cmpChain(
+      a.severity,b.severity,a.affected,b.affected,+a.sla,+b.sla,
+      rank(["security","outage","access","billing"],a.category),rank(["security","outage","access","billing"],b.category),
+      a.age,b.age,-a.index,-b.index
+    )
   }
-}
-function faceFromNormal(n){
-  if(n[1]===1)return"U";if(n[0]===1)return"R";if(n[2]===1)return"F";
-  if(n[1]===-1)return"D";if(n[0]===-1)return"L";return"B";
-}
-function faceIndex(face,p){
-  const[x,y,z]=p;
-  if(face==="U")return(z+1)*3+(x+1);
-  if(face==="D")return(1-z)*3+(x+1);
-  if(face==="F")return(1-y)*3+(x+1);
-  if(face==="B")return(1-y)*3+(1-x);
-  if(face==="R")return(1-y)*3+(1-z);
-  return(1-y)*3+(z+1);
-}
-function faceletsFrom(set){
-  const out={U:Array(9),R:Array(9),F:Array(9),D:Array(9),L:Array(9),B:Array(9)};
-  for(const st of set){const f=faceFromNormal(st.n);out[f][faceIndex(f,st.p)]=st.c;}
-  return["U","R","F","D","L","B"].map(f=>out[f].join("")).join("");
-}
-function isSolvedState(set){
-  const f=faceletsFrom(set);
-  for(let i=0;i<6;i++){const part=f.slice(i*9,i*9+9);if(!part.split("").every(c=>c===part[0]))return false;}
-  return true;
-}
-function moveParts(mv){
-  const face=mv[0],prime=mv.includes("'"),double=mv.includes("2"),base=MOVE_DEF[face].sign;
-  return{face,sign:prime?-base:base,quarters:double?2:1};
-}
-function applyLogical(set,mv){
-  const m=moveParts(mv);
-  for(let i=0;i<m.quarters;i++)rotateStickerSet(set,m.face,m.sign);
-}
-function selfTest(){
-  // Test cube mechanics without any inverse-sequence helper.
-  // Four quarter-turns of any face must return to the original solved state.
-  for(const face of ["U","R","F","D","L","B"]){
-    const test=initialStickers();
-    for(let i=0;i<4;i++)applyLogical(test,face);
-    if(!isSolvedState(test))return false;
+];
+
+function rank(order,value){return order.length-order.indexOf(value);}
+function cmpChain(...vals){
+  for(let i=0;i<vals.length;i+=2){
+    if(vals[i]!==vals[i+1])return vals[i]-vals[i+1];
   }
-  return true;
+  return 0;
+}
+function mulberry32(seed){return function(){let t=seed+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function randomSeed(){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]>>>0;}
+function int(r,min,max){return Math.floor(r()*(max-min+1))+min;}
+
+function generateRound(n,forcedSeed){
+  const seed=forcedSeed??randomSeed(),r=mulberry32(seed);
+  const cats=["security","outage","billing","access"];
+  const candidates=[];
+  for(let i=0;i<n;i++){
+    candidates.push({
+      index:i+1,
+      category:cats[int(r,0,cats.length-1)],
+      severity:int(r,1,5),
+      affected:int(r,1,5000),
+      age:int(r,1,180),
+      sla:r()<.34,
+      vip:r()<.18
+    });
+  }
+  const policyIndex=int(r,0,policies.length-1);
+  const policy=policies[policyIndex];
+  const sorted=[...candidates].sort((a,b)=>policy.compare(b,a));
+  const oracle=sorted[0];
+  return{seed,candidates,policy,policyIndex,oracle};
 }
 
-let stickers=initialStickers();
-let busy=false;
-let historyErased=false;
-let lolipopApiKey="";
-let jevLive=false;
-let jevMoveCount=0;
-let autoRunning=false;
-let visitedStates=new Set();
-const maxMoves=250;
-
-function easeOut(t){return 1-Math.pow(1-t,3);}
-async function animateQuarter(face,sign,duration){
-  const d=MOVE_DEF[face];
-  const selected=cubies.filter(c=>Math.round(c.userData.coord[d.axis])===d.layer);
-  const holder=new THREE.Group();
-  cubeRoot.add(holder);
-  selected.forEach(c=>holder.attach(c));
-  const axis=["x","y","z"][d.axis];
-  const target=sign*Math.PI/2;
-  const started=performance.now();
-  await new Promise(resolve=>{
-    function tick(now){
-      const p=Math.min(1,(now-started)/duration);
-      holder.rotation[axis]=target*easeOut(p);
-      if(p<1)requestAnimationFrame(tick);
-      else{
-        selected.forEach(c=>{
-          cubeRoot.attach(c);
-          c.position.x=Math.round(c.position.x/1.03)*1.03;
-          c.position.y=Math.round(c.position.y/1.03)*1.03;
-          c.position.z=Math.round(c.position.z/1.03)*1.03;
-          c.userData.coord=[Math.round(c.position.x/1.03),Math.round(c.position.y/1.03),Math.round(c.position.z/1.03)];
-        });
-        cubeRoot.remove(holder);
-        resolve();
-      }
-    }
-    requestAnimationFrame(tick);
+function desc(c){
+  return CATEGORY_LABELS[c.category]+"; severity "+c.severity+"/5; "+c.affected+" users affected; open "+c.age+" min; SLA risk "+(c.sla?"yes":"no")+"; VIP "+(c.vip?"yes":"no")+".";
+}
+function optionMap(candidates){
+  return Object.fromEntries(candidates.map((c,i)=>["c"+i,desc(c)]));
+}
+function renderSignals(round,jevId){
+  const host=$("#signals");host.innerHTML="";
+  const oracleId="c"+(round.oracle.index-1);
+  round.candidates.forEach((c,i)=>{
+    const id="c"+i,d=document.createElement("div");
+    d.className="signal";
+    if(id===jevId)d.classList.add("jev");
+    if(id===oracleId)d.classList.add("oracle");
+    if(id===jevId&&id===oracleId)d.classList.add("correct");
+    d.textContent=String(c.index);
+    d.title=desc(c);
+    host.appendChild(d);
   });
 }
-async function performMove(mv,duration=230,countAsJev=false){
-  while(busy)await new Promise(r=>setTimeout(r,15));
-  busy=true;updateUI();
-  const p=moveParts(mv);
-  for(let i=0;i<p.quarters;i++){await animateQuarter(p.face,p.sign,duration);rotateStickerSet(stickers,p.face,p.sign);}
-  if(countAsJev)jevMoveCount++;
-  busy=false;updateUI();
-}
-function currentState(){return faceletsFrom(stickers);}
-function updateUI(){
-  const solved=isSolvedState(stickers);
-  $("#moveCount").textContent=String(jevMoveCount);
-  $("#cubeState").textContent=solved?"Solved":"Scrambled";
-  $("#badge").textContent=jevLive?"Jev Live":"Jev offline";
-  $("#badge").className="badge"+(jevLive?" live":"");
-  $("#status").textContent=busy?"Turning…":solved?"Cube solved":historyErased?"History erased — Jev sees only current cube state":"Cube scrambled";
-  const canSolve=jevLive&&historyErased&&!solved&&!busy;
-  $("#step").disabled=!canSolve;
-  $("#auto").disabled=!canSolve||autoRunning;
-  $("#pause").disabled=!autoRunning;
-}
-function resetCube(){
-  autoRunning=false;
-  rebuildVisualCube();
-  stickers=initialStickers();
-  historyErased=false;
-  jevMoveCount=0;
-  visitedStates=new Set();
-  $("#forget").disabled=true;
-  $("#history").textContent="No shuffle exists yet.";
-  $("#jevMove").textContent="—";
-  $("#jevMeta").textContent="No Jev decision yet.";
-  $("#probabilities").innerHTML="";
-  updateUI();
-}
-
-rebuildVisualCube();
-if(!selfTest())$("#history").innerHTML='<span class="err">Internal cube self-test failed.</span>';
-updateUI();
-
-for(const move of LEGAL){
-  const b=document.createElement("button");b.type="button";b.textContent=move;
-  b.addEventListener("click",()=>performMove(move,220,false));
-  $("#manualMoves").appendChild(b);
-}
-
-$("#reset").addEventListener("click",resetCube);
-$("#shuffle").addEventListener("click",async()=>{
-  if(busy||autoRunning)return;
-  resetCube();
-  const n=Math.max(1,Math.min(40,parseInt($("#scrambleLen").value,10)||20));
-  let previousFace="";
-  const randomIndex=max=>{
-    if(globalThis.crypto?.getRandomValues){
-      const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max;
-    }
-    return Math.floor(Math.random()*max);
-  };
-  for(let i=0;i<n;i++){
-    const options=LEGAL.filter(m=>m[0]!==previousFace);
-    const mv=options[randomIndex(options.length)];
-    previousFace=mv[0];
-    // The generated move is used once, animated/applied, and not appended to any history array.
-    await performMove(mv,115,false);
-  }
-  previousFace="";
-  $("#forget").disabled=false;
-  $("#history").textContent="Shuffle complete: "+n+" random animated turns. The move sequence was never stored. Press Forget shuffle to lock the blind state.";
-  updateUI();
-});
-$("#forget").addEventListener("click",()=>{
-  historyErased=true;
-  visitedStates=new Set([currentState()]);
-  $("#forget").disabled=true;
-  $("#history").innerHTML='<span class="ok">Blind state locked.</span> The shuffle moves were never stored; Jev receives only the current 54-sticker state.';
-  updateUI();
-});
-
-async function callBackend(payload){
-  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-  const data=await response.json().catch(()=>({error:"Invalid backend response"}));
-  if(!response.ok)throw new Error(data.error+(data.details?" — "+JSON.stringify(data.details):""));
-  return data;
-}
-$("#connect").addEventListener("click",async()=>{
-  const token=$("#apiToken").value.trim();
-  if(!token){$("#jevMeta").textContent="Paste your Lolipop AI Gateway API key first.";return;}
-  $("#connect").disabled=true;
-  $("#jevMeta").textContent="Connecting to Jev through Lolipop…";
-  try{
-    const info=await callBackend({action:"connect",apiKey:token});
-    lolipopApiKey=token;
-    jevLive=true;
-    $("#apiToken").value="";
-    $("#jevMeta").textContent=info.hasJev===false
-      ?"Connected, but this API key does not currently list a probabilistic-decision model. Check model permissions."
-      :"Connected to real typesafe/jev-latest through Lolipop AI Gateway.";
-  }catch(e){
-    lolipopApiKey="";
-    jevLive=false;
-    $("#jevMeta").textContent="Connection failed: "+e.message;
-  }
-  $("#connect").disabled=false;
-  updateUI();
-});
-function showDecision(result,move){
-  $("#jevMove").textContent=move;
-  const conf=typeof result.confidence==="number"?(result.confidence*100).toFixed(1)+"%":String(result.confidence??"n/a");
-  const usage=result.usage&&result.usage.input_tokens?" · "+result.usage.input_tokens+" input tokens":"";
-  $("#jevMeta").textContent="typesafe/jev-latest · confidence "+conf+" · "+result.latencyMs+" ms"+usage;
-  const rows=Object.entries(result.probabilities||{}).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,5);
-  $("#probabilities").innerHTML="";
-  for(const[k,v]of rows){
-    const p=Math.max(0,Math.min(1,Number(v)||0));
-    const row=document.createElement("div");row.className="bar";
-    const label=document.createElement("div");label.textContent=ID_TO_MOVE[k]||k;
+function renderTopProbabilities(result,round){
+  const host=$("#probs");host.innerHTML="";
+  Object.entries(result.probabilities||{}).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,5).forEach(([id,v])=>{
+    const idx=Number(id.slice(1)),p=Math.max(0,Math.min(1,Number(v)||0));
+    const row=document.createElement("div");row.className="prob";
+    const label=document.createElement("div");label.textContent=Number.isInteger(idx)?("#"+(idx+1)):id;
     const track=document.createElement("div");track.className="track";
     const fill=document.createElement("div");fill.className="fill";fill.style.width=(p*100).toFixed(1)+"%";track.appendChild(fill);
-    const percent=document.createElement("div");percent.textContent=(p*100).toFixed(0)+"%";
-    row.append(label,track,percent);$("#probabilities").appendChild(row);
-  }
+    const pct=document.createElement("div");pct.textContent=(p*100).toFixed(0)+"%";
+    row.append(label,track,pct);host.appendChild(row);
+  });
 }
-function cloneStickerState(set){
-  return set.map(st=>({c:st.c,p:[...st.p],n:[...st.n]}));
+function updateSession(){
+  $("#accuracy").textContent=session.rounds?Math.round(session.correct/session.rounds*100)+"%":"—";
+  $("#accuracySub").textContent=session.rounds+" measured round"+(session.rounds===1?"":"s");
 }
-function solvedFacelets(facelets){
-  for(let i=0;i<6;i++){
-    const face=facelets.slice(i*9,i*9+9);
-    if(!face.split("").every(ch=>ch===face[0]))return false;
-  }
-  return true;
+function setBusy(v){
+  busy=v;
+  $("#runOne").disabled=!live||v;
+  $("#runFive").disabled=!live||v;
+  $("#sweep").disabled=!live||v;
+  $("#connect").disabled=v;
 }
-function allowedNonRepeatingMoveIds(){
-  const allowed=[];
-  for(const mv of LEGAL){
-    const test=cloneStickerState(stickers);
-    applyLogical(test,mv);
-    const next=faceletsFrom(test);
-    if(!visitedStates.has(next))allowed.push(MOVE_TO_ID[mv]);
-  }
-  return allowed;
+async function api(body){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({error:"Invalid backend response"}));
+  if(!r.ok)throw new Error(j.error+(j.details?" — "+JSON.stringify(j.details):""));
+  return j;
 }
-async function nextJevMove(){
-  if(!jevLive||!historyErased||busy||isSolvedState(stickers))return false;
-  if(jevMoveCount>=maxMoves){$("#jevMeta").textContent="Stopped at the 250-move safety cap.";return false;}
-  const before=currentState();
+
+$("#connect").addEventListener("click",async()=>{
+  const candidate=$("#apiKey").value.trim();
+  if(!candidate)return $("#status").textContent="Paste your Lolipop API key first.";
+  setBusy(true);$("#status").className="status";$("#status").textContent="Checking Jev access…";
   try{
-    const allowedMoves=allowedNonRepeatingMoveIds();
-    if(!allowedMoves.length){
-      autoRunning=false;
-      $("#history").innerHTML='<span class="err">Loop guard exhausted.</span> Every single legal move would return to a state Jev already visited.';
-      updateUI();return false;
-    }
-    const blocked=18-allowedMoves.length;
-    const result=await callBackend({action:"decide",apiKey:lolipopApiKey,facelets:before,allowedMoves});
-    const mv=ID_TO_MOVE[result.choice];
-    if(!mv)throw new Error("Unknown Jev move: "+result.choice);
-    showDecision(result,mv);
-    if(blocked>0)$("#jevMeta").textContent+=" · loop guard blocked "+blocked+" repeat move"+(blocked===1?"":"s");
-    const speedValue=parseInt($("#speed").value,10);
-    const moveDuration=speedValue===0?70:Math.max(180,Math.min(500,(Number.isFinite(speedValue)?speedValue:800)*.35));
-    await performMove(mv,moveDuration,true);
-    const after=currentState();
-    visitedStates.add(after);
-    if(isSolvedState(stickers)){
-      autoRunning=false;
-      $("#history").innerHTML='<span class="ok">Solved by Jev in '+jevMoveCount+' moves.</span>';
-      updateUI();return false;
-    }
-    return true;
+    await api({action:"connect",apiKey:candidate});
+    key=candidate;live=true;$("#apiKey").value="";
+    $("#badge").textContent="Jev Live";$("#badge").className="badge live";
+    $("#status").className="status ok";$("#status").textContent="Connected. Ready for a one-shot benchmark.";
   }catch(e){
-    autoRunning=false;
-    $("#jevMeta").textContent="Jev error: "+e.message;
-    updateUI();return false;
+    key="";live=false;$("#badge").textContent="Jev offline";$("#badge").className="badge";
+    $("#status").className="status bad";$("#status").textContent="Connection failed: "+e.message;
   }
-}
-$("#step").addEventListener("click",nextJevMove);
-const OPPOSITE_FACE={U:"D",D:"U",R:"L",L:"R",F:"B",B:"F"};
-
-function buildMacroCandidates(){
-  const candidates=[];
-  const seen=new Set();
-
-  for(const first of LEGAL){
-    const one=cloneStickerState(stickers);
-    applyLogical(one,first);
-    const oneState=faceletsFrom(one);
-
-    if(!visitedStates.has(oneState)&&!seen.has(oneState)){
-      seen.add(oneState);
-      candidates.push({moves:[first],facelets:oneState});
-    }
-
-    for(const second of LEGAL){
-      const secondFace=second[0];
-      if(secondFace===first[0]||secondFace===OPPOSITE_FACE[first[0]])continue;
-
-      const two=cloneStickerState(one);
-      applyLogical(two,second);
-      const twoState=faceletsFrom(two);
-      if(visitedStates.has(twoState)||seen.has(twoState))continue;
-
-      seen.add(twoState);
-      candidates.push({moves:[first,second],facelets:twoState});
-    }
-  }
-
-  return candidates.slice(0,234);
-}
-
-function showMacroDecision(result,candidates,callNumber){
-  const moves=Array.isArray(result.moves)?result.moves:[];
-  $("#jevMove").textContent=moves.join(" ")||"—";
-
-  const conf=typeof result.confidence==="number"
-    ?(result.confidence*100).toFixed(1)+"%"
-    :"n/a";
-  const usage=result.usage&&result.usage.input_tokens
-    ?" · "+result.usage.input_tokens+" input tokens"
-    :"";
-
-  $("#jevMeta").textContent=
-    "typesafe/jev-latest · macro "+callNumber+
-    " · "+(result.candidateCount??candidates.length)+" candidates"+
-    " · "+result.latencyMs+" ms"+
-    " · confidence "+conf+
-    usage;
-
-  const entries=Object.entries(result.probabilities||{})
-    .sort((a,b)=>Number(b[1])-Number(a[1]))
-    .slice(0,5);
-
-  $("#probabilities").innerHTML="";
-  for(const [id,pRaw] of entries){
-    const index=Number(String(id).replace(/^c/,""));
-    const labelText=Number.isInteger(index)&&candidates[index]
-      ?candidates[index].moves.join(" ")
-      :String(id);
-    const p=Math.max(0,Math.min(1,Number(pRaw)||0));
-
-    const row=document.createElement("div");
-    row.className="bar";
-
-    const label=document.createElement("div");
-    label.textContent=labelText;
-
-    const track=document.createElement("div");
-    track.className="track";
-    const fill=document.createElement("div");
-    fill.className="fill";
-    fill.style.width=(p*100).toFixed(1)+"%";
-    track.appendChild(fill);
-
-    const percent=document.createElement("div");
-    percent.textContent=(p*100).toFixed(0)+"%";
-
-    row.append(label,track,percent);
-    $("#probabilities").appendChild(row);
-  }
-}
-
-function macroAnimationDuration(){
-  const speedValue=parseInt($("#speed").value,10);
-  if(speedValue===0)return 70;
-  if(speedValue<=300)return 110;
-  if(speedValue>=1400)return 320;
-  return 180;
-}
-
-async function runJevMacroSolve(){
-  const started=performance.now();
-  let macroCalls=0;
-  let evaluated=0;
-  const maxMacroCalls=80;
-
-  while(autoRunning&&!isSolvedState(stickers)&&macroCalls<maxMacroCalls){
-    const candidates=buildMacroCandidates();
-
-    if(!candidates.length){
-      $("#history").innerHTML='<span class="err">Macro search exhausted.</span> Every generated 1–2 move continuation would return to an already visited state.';
-      break;
-    }
-
-    evaluated+=candidates.length;
-    $("#history").textContent=
-      "Jev evaluating "+candidates.length+
-      " legal 1–2 move futures in one call…";
-
-    let result;
-    try{
-      result=await callBackend({
-        action:"macro",
-        apiKey:lolipopApiKey,
-        candidates:candidates.map(c=>({
-          moves:c.moves,
-          facelets:c.facelets
-        }))
-      });
-    }catch(e){
-      $("#jevMeta").textContent="Jev macro error: "+e.message;
-      break;
-    }
-
-    macroCalls++;
-    showMacroDecision(result,candidates,macroCalls);
-
-    const chosenMoves=Array.isArray(result.moves)?result.moves:[];
-    if(!chosenMoves.length){
-      $("#history").innerHTML='<span class="err">Jev returned an empty macro.</span>';
-      break;
-    }
-
-    for(const mv of chosenMoves){
-      if(!autoRunning)break;
-      await performMove(mv,macroAnimationDuration(),true);
-      visitedStates.add(currentState());
-
-      if(isSolvedState(stickers)){
-        const elapsed=Math.round(performance.now()-started);
-        $("#history").innerHTML=
-          '<span class="ok">Solved by Jev Macro Solve.</span> '+
-          jevMoveCount+" cube moves · "+
-          macroCalls+" Jev calls · "+
-          evaluated+" candidate futures · "+
-          elapsed+" ms total.";
-        return;
-      }
-    }
-  }
-
-  if(!isSolvedState(stickers)&&macroCalls>=maxMacroCalls){
-    const elapsed=Math.round(performance.now()-started);
-    $("#history").innerHTML=
-      '<span class="err">Stopped at the macro safety cap.</span> '+
-      macroCalls+" Jev calls · "+
-      jevMoveCount+" cube moves · "+
-      evaluated+" candidate futures · "+
-      elapsed+" ms.";
-  }
-}
-
-$("#auto").addEventListener("click",async()=>{
-  if(autoRunning)return;
-  autoRunning=true;
-  updateUI();
-  await runJevMacroSolve();
-  autoRunning=false;
-  updateUI();
+  setBusy(false);
 });
-$("#pause").addEventListener("click",()=>{autoRunning=false;updateUI();});
+
+async function runRound(n,{countSession=true,forcedSeed}={}){
+  const round=generateRound(n,forcedSeed);
+  $("#seed").textContent="seed "+round.seed;
+  $("#policy").innerHTML="<strong>Policy:</strong> "+round.policy.text;
+  renderSignals(round,null);
+  $("#jevPick").textContent="…";$("#oraclePick").textContent="hidden";
+  $("#jevDesc").textContent="Jev is deciding from "+n+" candidates.";
+  $("#oracleDesc").textContent="Held locally until Jev answers.";
+  $("#status").className="status";$("#status").textContent="One Jev Choice call in progress…";
+  $("#choiceCountMetric").textContent=n+" choices · random baseline "+(100/n).toFixed(n>100?2:1)+"%";
+
+  const t0=performance.now();
+  const result=await api({action:"benchmark",apiKey:key,policy:round.policy.text,options:optionMap(round.candidates)});
+  const roundtrip=Math.round(performance.now()-t0);
+
+  const choice=result.choice;
+  const idx=Number(String(choice).replace(/^c/,""));
+  const jevCandidate=Number.isInteger(idx)?round.candidates[idx]:null;
+  const oracleId="c"+(round.oracle.index-1);
+  const correct=choice===oracleId;
+  const conf=typeof result.confidence==="number"?result.confidence:null;
+
+  renderSignals(round,choice);
+  renderTopProbabilities(result,round);
+  $("#gatewayMs").textContent=result.latencyMs+" ms";
+  $("#roundtripMs").textContent=roundtrip+" ms";
+  $("#confidence").textContent=conf==null?"—":Math.round(conf*100)+"%";
+  $("#jevPick").textContent=jevCandidate?"#"+jevCandidate.index:choice;
+  $("#jevDesc").textContent=jevCandidate?desc(jevCandidate):"Unknown candidate.";
+  $("#oraclePick").textContent="#"+round.oracle.index;
+  $("#oracleDesc").textContent=desc(round.oracle);
+  $("#status").className="status "+(correct?"ok":"bad");
+  $("#status").textContent=correct
+    ?"Correct — one call, no retry."
+    :"Incorrect — Jev picked #"+(jevCandidate?.index??"?")+"; oracle was #"+round.oracle.index+".";
+
+  if(countSession){
+    session.rounds++;if(correct)session.correct++;
+    session.latencies.push(result.latencyMs);session.roundtrips.push(roundtrip);updateSession();
+  }
+  return{n,round,result,roundtrip,correct,conf};
+}
+
+$("#runOne").addEventListener("click",async()=>{
+  if(busy||!live)return;setBusy(true);
+  try{await runRound(parseInt($("#choiceCount").value,10));}
+  catch(e){$("#status").className="status bad";$("#status").textContent="Benchmark error: "+e.message;}
+  setBusy(false);
+});
+$("#runFive").addEventListener("click",async()=>{
+  if(busy||!live)return;setBusy(true);
+  const n=parseInt($("#choiceCount").value,10);
+  for(let i=0;i<5;i++){
+    try{await runRound(n);}catch(e){$("#status").className="status bad";$("#status").textContent="Stopped: "+e.message;break;}
+  }
+  setBusy(false);
+});
+$("#sweep").addEventListener("click",async()=>{
+  if(busy||!live)return;setBusy(true);
+  $("#sweepWrap").hidden=false;$("#sweepBody").innerHTML="";
+  for(const n of [16,64,128,255]){
+    try{
+      const out=await runRound(n);
+      const tr=document.createElement("tr");
+      tr.innerHTML="<td>"+n+"</td><td>"+(out.correct?"✓":"✕")+"</td><td>"+out.result.latencyMs+" ms</td><td>"+out.roundtrip+" ms</td><td>"+(out.conf==null?"—":Math.round(out.conf*100)+"%")+"</td>";
+      $("#sweepBody").appendChild(tr);
+    }catch(e){
+      const tr=document.createElement("tr");tr.innerHTML="<td>"+n+"</td><td colspan=4>Error</td>";$("#sweepBody").appendChild(tr);break;
+    }
+  }
+  setBusy(false);
+});
+
+renderSignals(generateRound(64,123456789),null);
+updateSession();
 </script>
 </body>
 </html>
