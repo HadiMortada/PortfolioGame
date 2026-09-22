@@ -68,7 +68,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
       <div class="note">Your Lolipop API key is kept only in this page's memory and forwarded to the Supabase proxy for each request. It is not written to localStorage or the database.</div>
       <div class="solver-actions">
         <button id="step" disabled>Next Jev move</button>
-        <button id="auto" disabled>Auto solve</button>
+        <button id="auto" disabled>Find Jev plan</button>
       </div>
       <div class="solver-actions">
         <button id="pause" disabled>Pause</button>
@@ -91,7 +91,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
   </div>
 
   <div class="privacy">Blind benchmark rule: shuffle moves are generated one-by-one, animated, applied, and immediately discarded — the full scramble sequence is never stored. After <b>Forget shuffle</b>, Jev receives the current 54-sticker cube state. A loop guard may remove only moves that would return to a state Jev already visited; it does not rank moves, use the scramble, or use a Rubik solver.</div>
-  <div class="foot">Jev is a structured decision model, so solving a full Rubik's Cube is intentionally a hard benchmark. Loop prevention only blocks known repeats; Jev still chooses every actual move.</div>
+  <div class="foot">Plan mode uses Jev as a parallel ranking heuristic over legal future cube states, then animates the path only after a solution is found. It does not use the scramble history or a conventional Rubik solver. Because the search keeps only a Jev-ranked beam, the result is the shortest path found by that search, not a mathematical guarantee of the globally optimal Rubik solution.</div>
 </div>
 
 <script type="module">
@@ -398,6 +398,13 @@ function showDecision(result,move){
 function cloneStickerState(set){
   return set.map(st=>({c:st.c,p:[...st.p],n:[...st.n]}));
 }
+function solvedFacelets(facelets){
+  for(let i=0;i<6;i++){
+    const face=facelets.slice(i*9,i*9+9);
+    if(!face.split("").every(ch=>ch===face[0]))return false;
+  }
+  return true;
+}
 function allowedNonRepeatingMoveIds(){
   const allowed=[];
   for(const mv of LEGAL){
@@ -443,15 +450,98 @@ async function nextJevMove(){
   }
 }
 $("#step").addEventListener("click",nextJevMove);
+async function findJevPlan(){
+  const started=performance.now();
+  const beamWidth=6;
+  const maxDepth=24;
+  let frontier=[{set:cloneStickerState(stickers),path:[],lastFace:""}];
+  const selectedSeen=new Set([faceletsFrom(frontier[0].set)]);
+  let rankedStates=0;
+  let rankCalls=0;
+
+  for(let depth=1;depth<=maxDepth&&autoRunning;depth++){
+    const dedupe=new Map();
+
+    for(const node of frontier){
+      for(const mv of LEGAL){
+        if(mv[0]===node.lastFace)continue;
+        const nextSet=cloneStickerState(node.set);
+        applyLogical(nextSet,mv);
+        const fs=faceletsFrom(nextSet);
+        if(selectedSeen.has(fs)||dedupe.has(fs))continue;
+        const candidate={set:nextSet,path:[...node.path,mv],lastFace:mv[0],facelets:fs};
+        if(solvedFacelets(fs)){
+          const elapsed=Math.round(performance.now()-started);
+          $("#history").innerHTML='<span class="ok">Jev-guided plan found:</span> '+candidate.path.length+' moves · '+rankCalls+' Jev ranking calls · '+elapsed+' ms planning.';
+          return candidate.path;
+        }
+        dedupe.set(fs,candidate);
+      }
+    }
+
+    const candidates=[...dedupe.values()];
+    if(!candidates.length)break;
+    rankedStates+=candidates.length;
+    $("#history").textContent="Jev planning… depth "+depth+" · ranking "+candidates.length+" candidate cube states in parallel.";
+
+    let ranked;
+    try{
+      ranked=await callBackend({
+        action:"rank",
+        apiKey:lolipopApiKey,
+        candidates:candidates.map(x=>({facelets:x.facelets,pathLength:x.path.length}))
+      });
+    }catch(e){
+      $("#jevMeta").textContent="Jev planner error: "+e.message;
+      return null;
+    }
+    rankCalls++;
+
+    const probs=ranked.probabilities||{};
+    const ordered=candidates
+      .map((candidate,i)=>({candidate,p:Number(probs["c"+i]??0)}))
+      .sort((a,b)=>b.p-a.p)
+      .slice(0,beamWidth);
+
+    frontier=ordered.map(x=>x.candidate);
+    frontier.forEach(x=>selectedSeen.add(x.facelets));
+
+    const conf=typeof ranked.confidence==="number"?(ranked.confidence*100).toFixed(1)+"%":"n/a";
+    $("#jevMove").textContent="Plan d"+depth;
+    $("#jevMeta").textContent="typesafe/jev-latest · ranked "+candidates.length+" states in "+ranked.latencyMs+" ms · confidence "+conf+" · beam "+beamWidth;
+    showPlanningBars(ordered);
+  }
+
+  const elapsed=Math.round(performance.now()-started);
+  $("#history").innerHTML='<span class="err">No solution found in the Jev beam.</span> '+rankCalls+' Jev calls · '+rankedStates+' candidate states · '+elapsed+' ms. Try a shorter shuffle or run again.';
+  return null;
+}
+function showPlanningBars(ordered){
+  $("#probabilities").innerHTML="";
+  ordered.slice(0,5).forEach((entry,i)=>{
+    const p=Math.max(0,Math.min(1,entry.p||0));
+    const row=document.createElement("div");row.className="bar";
+    const label=document.createElement("div");label.textContent="#"+(i+1);
+    const track=document.createElement("div");track.className="track";
+    const fill=document.createElement("div");fill.className="fill";fill.style.width=(p*100).toFixed(1)+"%";track.appendChild(fill);
+    const percent=document.createElement("div");percent.textContent=(p*100).toFixed(0)+"%";
+    row.append(label,track,percent);$("#probabilities").appendChild(row);
+  });
+}
 $("#auto").addEventListener("click",async()=>{
   if(autoRunning)return;
   autoRunning=true;updateUI();
-  while(autoRunning&&!isSolvedState(stickers)&&jevMoveCount<maxMoves){
-    const go=await nextJevMove();
-    if(!go)break;
-    const speedValue=parseInt($("#speed").value,10);
-    const waitMs=speedValue===0?0:Math.max(80,Number.isFinite(speedValue)?speedValue:800);
-    if(waitMs>0)await new Promise(r=>setTimeout(r,waitMs));
+  const plan=await findJevPlan();
+  if(plan&&autoRunning){
+    $("#jevMove").textContent=plan.length+" moves";
+    $("#jevMeta").textContent="Jev plan ready — animating the complete path.";
+    for(const mv of plan){
+      if(!autoRunning)break;
+      await performMove(mv,70,true);
+    }
+    if(isSolvedState(stickers)){
+      $("#history").innerHTML='<span class="ok">Solved.</span> Jev-guided search found and executed a '+plan.length+'-move path.';
+    }
   }
   autoRunning=false;updateUI();
 });
