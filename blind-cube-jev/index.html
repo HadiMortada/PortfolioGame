@@ -3,273 +3,324 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#08090d">
-<title>Jev Runner</title>
+<meta name="theme-color" content="#07090d">
+<title>Jev Runner — Real-Time Game AI</title>
 <style>
-:root{color-scheme:dark;--bg:#08090d;--panel:#11141b;--panel2:#171b24;--line:#29303c;--text:#f7f8fb;--muted:#9aa3b2;--accent:#7c3aed;--ok:#42da8b;--bad:#ff7474;--warn:#f3c95d}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,#211832 0,#0b0d12 36%,#06070a 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:12px 10px 28px}
-.top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#ab98e8}.title{font-size:21px;font-weight:850;letter-spacing:-.03em;margin-top:2px}.sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:650px}.badge{font-size:10px;padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:#0d1016;white-space:nowrap}.badge.live{border-color:#246d48;background:#0d1b14;color:#94f2bc}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:10px}.game-card,.panel{border:1px solid var(--line);border-radius:20px;background:rgba(16,19,26,.94);overflow:hidden}.hud{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}.hud-left,.hud-right{display:flex;align-items:center;gap:10px}.score{font-weight:800;font-size:16px}.small{font-size:10px;color:var(--muted)}.hearts{font-size:17px;letter-spacing:2px}.game-wrap{padding:10px}.canvas-wrap{position:relative;border-radius:17px;overflow:hidden;border:1px solid #262d38;background:#11151b;touch-action:none}.canvas-wrap canvas{display:block;width:100%;height:auto;aspect-ratio:3/4}.game-message{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:190px;text-align:center;padding:14px;border-radius:15px;background:rgba(7,9,13,.86);backdrop-filter:blur(8px);border:1px solid #ffffff18;font-size:13px}.game-message.hidden{display:none}.controls{display:flex;flex-wrap:wrap;gap:7px;padding-top:9px}button,select,input{font:inherit}button,input{min-height:44px;border:1px solid var(--line);background:#11151d;color:var(--text);border-radius:12px;padding:0 12px}button{cursor:pointer}button.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#8b5cf6;font-weight:750}button.good{border-color:#246d48;color:#9cf3c1;background:#0e1d15}button:disabled{opacity:.42;cursor:not-allowed}.goal-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px;border-top:1px solid var(--line)}.goal{font-size:11px;line-height:1.25}.goal.active{border-color:#8b5cf6;background:#171126}.panel{padding:12px}.panel h2{font-size:12px;margin:0 0 8px;color:#dfe3ea}.connect{display:grid;grid-template-columns:1fr auto;gap:7px}.connect input{min-width:0;width:100%;font-size:16px}.note{font-size:10px;line-height:1.5;color:var(--muted);margin-top:7px}.debug{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}.scene{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.lane{border:1px solid #28303d;border-radius:12px;padding:8px;text-align:center;background:#0c0f15}.lane .name{font-size:9px;color:#7f8896;text-transform:uppercase}.lane .obj{font-size:27px;margin-top:4px}.lane .type{font-size:10px;color:#bbc2cc;margin-top:2px}.decision{margin-top:10px;padding:10px;border-radius:14px;border:1px solid #2b3240;background:#0c0f15}.action{font-size:28px;font-weight:900;letter-spacing:-.04em}.meta{font-size:10px;color:var(--muted);line-height:1.45;margin-top:3px}.bars{display:grid;gap:6px;margin-top:8px}.bar{display:grid;grid-template-columns:54px 1fr 38px;gap:6px;align-items:center;font-size:10px}.track{height:7px;background:#252b37;border-radius:999px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#6d28d9,#a78bfa)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.stat{border:1px solid #28303d;border-radius:12px;padding:8px;background:#0c0f15}.stat .k{font-size:9px;color:var(--muted)}.stat .v{font-size:16px;font-weight:800;margin-top:2px}.links{margin-top:10px;font-size:10px;color:var(--muted)}.links a{color:#baa6ff}.truth{margin-top:10px;font-size:10px;color:#7e8794;line-height:1.45;border-top:1px solid var(--line);padding-top:9px}
-@media(max-width:780px){.layout{grid-template-columns:1fr}.panel{overflow:visible}}@media(max-width:390px){.app{padding:9px}.title{font-size:19px}.hud{padding:9px}.goal-row{padding:9px}.panel{padding:10px}}
+:root{color-scheme:dark;--bg:#07090d;--panel:#10131a;--panel2:#161a24;--line:#29303c;--text:#f7f8fb;--muted:#9aa3b2;--accent:#7c3aed;--accent2:#a78bfa;--ok:#39d98a;--bad:#ff747f;--warn:#f6c453}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -10%,#1d1530 0,#0a0c12 38%,#050609 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:14px 12px 28px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:11px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#b49cf5}.title{font-size:24px;font-weight:850;letter-spacing:-.035em;margin-top:2px}.sub{font-size:12px;line-height:1.5;color:var(--muted);margin-top:4px;max-width:700px}.badge{font-size:11px;white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:#0d1016}.badge.live{border-color:#246d48;background:#0d1b14;color:#8df1b7}
+.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(290px,.65fr);gap:11px}.game-card,.panel{border:1px solid var(--line);border-radius:22px;background:rgba(16,19,26,.94);overflow:hidden}.game-wrap{position:relative;background:#090c12}.game-wrap canvas{display:block;width:100%;height:auto;aspect-ratio:4/5;max-height:660px;touch-action:none}.hud{position:absolute;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none}.hud-pill{background:rgba(8,10,15,.78);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:7px 9px;font-size:11px;color:#d5dae4}.hud-pill b{font-size:13px;color:#fff}.decision-chip{position:absolute;left:50%;bottom:11px;transform:translateX(-50%);max-width:calc(100% - 22px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(8,10,15,.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 11px;font-size:11px;color:#d4dae4}
+.controls{padding:11px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}button,select,input{font:inherit}button,select,input{min-height:44px;border-radius:12px;border:1px solid var(--line);background:#11151d;color:var(--text);padding:0 12px}button{cursor:pointer}button.primary{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#8b5cf6;font-weight:750}button:disabled{opacity:.4;cursor:not-allowed}.goal{min-width:170px}.panel{padding:12px}.panel h2{margin:0 0 9px;font-size:13px}.connect{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}.connect input{min-width:0;width:100%;font-size:16px}.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:7px}.section{margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}.section-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#838c99;margin-bottom:8px}.lane-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.lane{border:1px solid #28303b;border-radius:14px;background:#0b0e14;padding:9px;text-align:center}.lane .name{font-size:9px;color:#818a97}.lane .obj{font-size:29px;line-height:1.1;margin:5px 0}.lane .prob{font-size:11px;color:#c7cdd7}.lane.chosen{border-color:#8b5cf6;box-shadow:inset 0 0 0 1px #8b5cf6}.lane.oracle{outline:1px solid #2b7650}.decision{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.metric{border:1px solid var(--line);border-radius:14px;background:#0c0f15;padding:9px}.metric .k{font-size:9px;color:#838c99}.metric .v{font-size:18px;font-weight:850;letter-spacing:-.025em;margin-top:2px}.metric .s{font-size:9px;color:#727b88;margin-top:2px}.action-big{font-size:27px;font-weight:900;letter-spacing:-.04em}.verdict{margin-top:8px;border:1px solid var(--line);border-radius:13px;padding:9px 10px;font-size:11px;line-height:1.45;color:#bfc6d0;background:#0c0f15}.verdict.ok{border-color:#276c49;color:#9af0bb}.verdict.bad{border-color:#74353e;color:#ffadb4}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.stats .metric .v{font-size:16px}.links{margin-top:11px;font-size:10px;color:#7d8693;line-height:1.6}.links a{color:#b9a4ff}.footer{margin-top:11px;text-align:center;font-size:10px;color:#717986;line-height:1.5}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.game-wrap canvas{max-height:none}.panel{overflow:visible}}@media(max-width:390px){.app{padding:10px}.title{font-size:21px}.goal{min-width:150px}.lane .obj{font-size:26px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="top">
-  <div>
-    <div class="eyebrow">Real Jev game control</div>
-    <div class="title">Jev Runner</div>
-    <div class="sub">A 3-lane runner controlled by real <b>typesafe/jev-latest</b>. The game sends the upcoming lane state early, Jev chooses LEFT / CENTER / RIGHT, and the player steers smoothly before the collision point.</div>
-  </div>
-  <div id="badge" class="badge">Jev offline</div>
-</header>
-
-<div class="layout">
-  <section class="game-card">
-    <div class="hud">
-      <div class="hud-left"><div><div class="small">SCORE</div><div id="score" class="score">0</div></div><div><div class="small">WAVE</div><div id="waveNum" class="score">0</div></div></div>
-      <div class="hud-right"><div><div class="small">LIVES</div><div id="hearts" class="hearts">❤️❤️❤️</div></div></div>
+  <header class="top">
+    <div>
+      <div class="eyebrow">Real TypeSafe Jev game</div>
+      <div class="title">Jev Runner</div>
+      <div class="sub">A 3-lane game inspired by the Unity demo you showed me. This version uses the real <b>typesafe/jev-latest</b> API: each wave is sent to Jev as a tiny structured state, Jev chooses LEFT/CENTER/RIGHT, and the player moves before the wave arrives.</div>
     </div>
-    <div class="game-wrap">
-      <div class="canvas-wrap">
-        <canvas id="game" width="720" height="960"></canvas>
-        <div id="message" class="game-message">Connect Jev, then press <b>Start Jev Drive</b>.</div>
+    <div id="badge" class="badge">Jev offline</div>
+  </header>
+
+  <div class="layout">
+    <section class="game-card">
+      <div class="game-wrap">
+        <canvas id="game" width="720" height="900" aria-label="Three-lane Jev runner game"></canvas>
+        <div class="hud">
+          <div class="hud-pill">Score <b id="score">0</b></div>
+          <div class="hud-pill">Lives <b id="lives">❤❤❤</b></div>
+          <div class="hud-pill">Wave <b id="waveNo">0</b></div>
+        </div>
+        <div id="decisionChip" class="decision-chip">Connect Jev to begin</div>
       </div>
       <div class="controls">
-        <button id="start" class="primary" disabled>Start Jev Drive</button>
+        <button id="start" class="primary" disabled>Start Jev</button>
         <button id="pause" disabled>Pause</button>
-        <button id="restart">Restart</button>
-        <button id="left">← Left</button>
-        <button id="center">Center</button>
-        <button id="right">Right →</button>
+        <button id="reset">Reset</button>
+        <select id="goal" class="goal" aria-label="Game goal">
+          <option value="fruit">🍎 Eat fruit · avoid animals</option>
+          <option value="animal">🐷 Eat animals · avoid fruit</option>
+        </select>
       </div>
-    </div>
-    <div class="goal-row">
-      <button id="goalFruit" class="goal active">🍎 Eat fruit<br><span class="small">avoid animals</span></button>
-      <button id="goalAnimal" class="goal">🐷 Eat animals<br><span class="small">avoid fruit</span></button>
-    </div>
-  </section>
+    </section>
 
-  <aside class="panel">
-    <h2>Real Jev connection</h2>
-    <div class="connect">
-      <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Lolipop AI Gateway API key">
-      <button id="connect">Connect</button>
-    </div>
-    <div id="connectText" class="note">The API key stays in page memory only. This game uses the real Jev API, not the local “Jev-like” model from the LinkedIn video.</div>
+    <aside class="panel">
+      <h2>Real Jev connection</h2>
+      <div class="connect">
+        <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Lolipop AI Gateway API key">
+        <button id="connect">Connect</button>
+      </div>
+      <div id="connectText" class="note">The key stays in page memory only. The game sends compact wave states through the Supabase proxy to real Jev.</div>
 
-    <div class="debug">
-      <h2>Upcoming scene</h2>
-      <div class="scene">
-        <div class="lane"><div class="name">Left</div><div id="leftObj" class="obj">—</div><div id="leftType" class="type">empty</div></div>
-        <div class="lane"><div class="name">Center</div><div id="centerObj" class="obj">—</div><div id="centerType" class="type">empty</div></div>
-        <div class="lane"><div class="name">Right</div><div id="rightObj" class="obj">—</div><div id="rightType" class="type">empty</div></div>
+      <div class="section">
+        <div class="section-title">Current wave perception</div>
+        <div id="laneGrid" class="lane-grid">
+          <div class="lane"><div class="name">LEFT</div><div class="obj">—</div><div class="prob">—</div></div>
+          <div class="lane"><div class="name">CENTER</div><div class="obj">—</div><div class="prob">—</div></div>
+          <div class="lane"><div class="name">RIGHT</div><div class="obj">—</div><div class="prob">—</div></div>
+        </div>
+        <div id="verdict" class="verdict">Waiting for a wave.</div>
       </div>
 
-      <div class="decision">
-        <div class="small">JEV ACTION</div>
-        <div id="action" class="action">—</div>
-        <div id="decisionMeta" class="meta">No decision yet.</div>
-        <div id="bars" class="bars"></div>
+      <div class="section">
+        <div class="section-title">Jev decision</div>
+        <div id="action" class="action-big">—</div>
+        <div class="decision">
+          <div class="metric"><div class="k">Jev latency</div><div id="latency" class="v">—</div><div class="s">gateway ↔ Jev</div></div>
+          <div class="metric"><div class="k">Roundtrip</div><div id="roundtrip" class="v">—</div><div class="s">phone ↔ API</div></div>
+          <div class="metric"><div class="k">Confidence</div><div id="confidence" class="v">—</div></div>
+          <div class="metric"><div class="k">Input tokens</div><div id="tokens" class="v">—</div></div>
+        </div>
       </div>
 
-      <div class="stats">
-        <div class="stat"><div class="k">Jev latency</div><div id="latency" class="v">—</div></div>
-        <div class="stat"><div class="k">Accuracy</div><div id="accuracy" class="v">—</div></div>
-        <div class="stat"><div class="k">Late calls</div><div id="late" class="v">0</div></div>
+      <div class="section">
+        <div class="section-title">Session</div>
+        <div class="stats">
+          <div class="metric"><div class="k">Decisions</div><div id="decisions" class="v">0</div></div>
+          <div class="metric"><div class="k">Accuracy</div><div id="accuracy" class="v">—</div></div>
+          <div class="metric"><div class="k">Avg Jev</div><div id="avgLatency" class="v">—</div></div>
+        </div>
       </div>
-    </div>
 
-    <div class="truth">Perception here is intentionally <b>symbolic</b>: the game already knows whether each lane contains fruit, animal, or empty. That isolates Jev's decision-making. The LinkedIn video instead used an on-device VLM to perceive the pixels before code chose the action.</div>
-    <div class="links"><a href="./decision-lab.html">Decision Lab</a> · <a href="./cube-stress-test.html">Rubik stress test</a></div>
-  </aside>
-</div>
+      <div class="links">
+        The LinkedIn video used a local <b>Jev-like</b> VLM head (~23 ms total). This game instead measures the actual hosted Jev API, so network latency is visible.<br>
+        <a href="./decision-lab.html">Decision Lab</a> · <a href="./cube-stress-test.html">Rubik stress test</a>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">Scientific control: every wave contains exactly one target object, one forbidden object, and one empty lane. The browser knows the oracle lane locally but never sends that answer to Jev. Changing the goal flips the correct lane rule without changing the game code.</div>
 </div>
 
 <script>
 const API_URL="https://gxxgicxsfuivqyjenvaw.supabase.co/functions/v1/blind-cube-jev-api";
 const $=s=>document.querySelector(s);
 const canvas=$("#game"),ctx=canvas.getContext("2d");
+const laneNames=["LEFT","CENTER","RIGHT"];
+const laneKey=["LEFT","CENTER","RIGHT"];
+const objectEmoji={fruit:"🍎",animal:"🐷",empty:"·"};
 
-let apiKey="";
-let running=false,paused=false,gameOver=false;
-let score=0,lives=3,wave=0;
-let playerLane=1,targetLane=1,playerX=0;
-let goal="fruit";
-let activeWave=null;
-let lastTs=0;
-let accuracy={total:0,correct:0};
-let lateCalls=0;
-let decisionSeq=0;
+let apiKey="",connected=false,running=false,paused=false;
+let score=0,lives=3,waveNumber=0,decisionCount=0,correctCount=0,latencies=[];
+let wave=null,nextSpawnAt=0,lastTime=performance.now(),playerLane=1,playerLaneVisual=1;
+let requestSerial=0;
 
-const fruits=["🍎","🍓","🥝","🍊","🍇","🥑"];
-const animals=["🐷","🐒","🐶","🐼","🐯","🐸"];
-const laneNames=["left","center","right"];
-
-function rnd(n){if(crypto?.getRandomValues){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n}return Math.floor(Math.random()*n)}
-function randomItem(){
-  const r=rnd(100);
-  if(r<42)return{type:"fruit",emoji:fruits[rnd(fruits.length)]};
-  if(r<84)return{type:"animal",emoji:animals[rnd(animals.length)]};
-  return{type:"empty",emoji:""};
-}
-function makeWave(){
-  let items=[randomItem(),randomItem(),randomItem()];
-  const desired=goal;
-  if(!items.some(x=>x.type===desired))items[rnd(3)]={type:desired,emoji:desired==="fruit"?fruits[rnd(fruits.length)]:animals[rnd(animals.length)]};
-  wave++;
-  $("#waveNum").textContent=wave;
-  return{id:++decisionSeq,y:.06,speed:.21,items,decisionPending:false,decisionDone:false,chosen:null,spawnedAt:performance.now()};
-}
-function laneX(index){return canvas.width*(.2+.3*index)}
-function resizePlayerTarget(){targetLane=Math.max(0,Math.min(2,targetLane))}
-function optimalLane(items){
-  const value=x=>x.type===goal?2:x.type==="empty"?1:0;
-  let best=0,bv=-1;
-  for(let i=0;i<3;i++){const v=value(items[i]);if(v>bv||(v===bv&&i===playerLane)){best=i;bv=v}}
-  return best;
-}
-function updateScenePanel(items){
-  items.forEach((x,i)=>{
-    $("#"+laneNames[i]+"Obj").textContent=x.emoji||"·";
-    $("#"+laneNames[i]+"Type").textContent=x.type;
-  });
-}
+function rand(max){if(crypto?.getRandomValues){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}return Math.floor(Math.random()*max)}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
 async function backend(body){
   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  const j=await r.json().catch(()=>({error:"Invalid backend response"}));
+  const j=await r.json().catch(()=>({error:"Invalid server response"}));
   if(!r.ok)throw new Error(j.error+(j.details?" — "+JSON.stringify(j.details):""));
   return j;
 }
-async function requestDecision(w){
-  if(!apiKey||w.decisionPending||w.decisionDone)return;
-  w.decisionPending=true;
-  updateScenePanel(w.items);
-  $("#action").textContent="…";
-  $("#decisionMeta").textContent="Jev is reading the upcoming wave…";
-
-  const scene={
-    currentLane:laneNames[playerLane],
-    lives,
-    score,
-    left:{type:w.items[0].type,distance:Number((.82-w.y).toFixed(2))},
-    center:{type:w.items[1].type,distance:Number((.82-w.y).toFixed(2))},
-    right:{type:w.items[2].type,distance:Number((.82-w.y).toFixed(2))}
-  };
-  const requestWaveId=w.id;
-  const goalText=goal==="fruit"?"Eat fruit and avoid animals. Empty lanes are safe but score nothing.":"Eat animals and avoid fruit. Empty lanes are safe but score nothing.";
-  const started=performance.now();
-  try{
-    const r=await backend({action:"runner",apiKey,scene,goal:goalText});
-    const round=Math.round(performance.now()-started);
-    if(!activeWave||activeWave.id!==requestWaveId){lateCalls++;$("#late").textContent=lateCalls;return}
-    const idx=laneNames.indexOf(r.action);
-    if(idx>=0){w.chosen=idx;targetLane=idx;resizePlayerTarget()}
-    w.decisionDone=true;
-    $("#action").textContent=(r.action||"—").toUpperCase();
-    const conf=typeof r.confidence==="number"?(r.confidence*100).toFixed(1)+"%":"—";
-    $("#decisionMeta").textContent="typesafe/jev-latest · "+r.latencyMs+" ms model/gateway · "+round+" ms phone roundtrip · confidence "+conf;
-    $("#latency").textContent=r.latencyMs+" ms";
-    renderBars(r.probabilities||{});
-    const oracle=optimalLane(w.items);
-    accuracy.total++;
-    if(idx===oracle)accuracy.correct++;
-    $("#accuracy").textContent=Math.round(accuracy.correct/accuracy.total*100)+"%";
-  }catch(e){
-    $("#action").textContent="ERR";
-    $("#decisionMeta").textContent="Jev error: "+e.message;
-  }finally{w.decisionPending=false}
+function goalNow(){return $("#goal").value==="animal"?"animal":"fruit"}
+function avoided(goal){return goal==="fruit"?"animal":"fruit"}
+function resetStats(){
+  score=0;lives=3;waveNumber=0;decisionCount=0;correctCount=0;latencies=[];
+  wave=null;playerLane=1;playerLaneVisual=1;requestSerial++;
+  updateHud();updateSession();clearDebug();
 }
-function renderBars(probs){
-  $("#bars").innerHTML="";
-  const arr=Object.entries(probs).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,3);
-  arr.forEach(([name,val])=>{
-    const p=Math.max(0,Math.min(1,Number(val)||0));
-    const row=document.createElement("div");row.className="bar";
-    row.innerHTML='<div>'+name.toUpperCase()+'</div><div class="track"><div class="fill" style="width:'+(p*100).toFixed(1)+'%"></div></div><div>'+(p*100).toFixed(0)+'%</div>';
-    $("#bars").appendChild(row);
+function updateHud(){
+  $("#score").textContent=score;
+  $("#lives").textContent="❤".repeat(Math.max(0,lives))+"♡".repeat(Math.max(0,3-lives));
+  $("#waveNo").textContent=waveNumber;
+}
+function updateSession(){
+  $("#decisions").textContent=decisionCount;
+  $("#accuracy").textContent=decisionCount?Math.round(correctCount/decisionCount*100)+"%":"—";
+  $("#avgLatency").textContent=latencies.length?Math.round(latencies.reduce((a,b)=>a+b,0)/latencies.length)+" ms":"—";
+}
+function clearDebug(){
+  $("#action").textContent="—";$("#latency").textContent="—";$("#roundtrip").textContent="—";$("#confidence").textContent="—";$("#tokens").textContent="—";
+  $("#verdict").className="verdict";$("#verdict").textContent="Waiting for a wave.";
+  renderLanes(null);
+}
+function renderLanes(w){
+  const nodes=[...$("#laneGrid").children];
+  nodes.forEach((n,i)=>{
+    n.className="lane";
+    n.querySelector(".obj").textContent=w?objectEmoji[w.lanes[i]]:"—";
+    let p="—";
+    if(w?.probabilities){
+      const raw=w.probabilities[laneKey[i]];
+      if(typeof raw==="number")p=Math.round(raw*100)+"%";
+    }
+    n.querySelector(".prob").textContent=p;
+    if(w?.choice===i)n.classList.add("chosen");
+    if(w?.resolved&&w?.oracle===i)n.classList.add("oracle");
   });
 }
-function resolveWave(w){
-  const item=w.items[playerLane];
-  if(item.type===goal){score+=10}
-  else if(item.type==="empty"){score+=0}
-  else{lives--;score=Math.max(0,score-5)}
-  $("#score").textContent=score;
-  $("#hearts").textContent="❤️".repeat(Math.max(0,lives))+"🖤".repeat(Math.max(0,3-lives));
-  if(lives<=0){gameOver=true;running=false;$("#message").classList.remove("hidden");$("#message").innerHTML="<b>Game over</b><br>Score "+score+"<br><span class='small'>Press Restart to try again.</span>";$("#start").disabled=true;$("#pause").disabled=true}
+function spawnWave(){
+  if(!running||paused||wave)return;
+  const goal=goalNow(),contents=shuffle(["fruit","animal","empty"]);
+  const oracle=contents.indexOf(goal);
+  const id=++requestSerial;
+  wave={id,goal,lanes:contents,oracle,choice:null,probabilities:null,progress:-0.1,resolved:false,answered:false,startedAt:performance.now()};
+  waveNumber++;updateHud();renderLanes(wave);
+  $("#decisionChip").textContent="Jev reading wave "+waveNumber+"…";
+  $("#verdict").className="verdict";$("#verdict").textContent="Goal: collect "+goal+" · avoid "+avoided(goal)+". Oracle remains hidden until Jev answers.";
+  askJev(wave);
 }
-function reset(){
-  running=false;paused=false;gameOver=false;score=0;lives=3;wave=0;playerLane=1;targetLane=1;playerX=laneX(1);activeWave=null;lastTs=0;accuracy={total:0,correct:0};lateCalls=0;decisionSeq=0;
-  $("#score").textContent="0";$("#waveNum").textContent="0";$("#hearts").textContent="❤️❤️❤️";$("#accuracy").textContent="—";$("#late").textContent="0";$("#latency").textContent="—";$("#action").textContent="—";$("#decisionMeta").textContent="No decision yet.";$("#bars").innerHTML="";updateScenePanel([{type:"empty",emoji:""},{type:"empty",emoji:""},{type:"empty",emoji:""}]);
-  $("#message").classList.remove("hidden");$("#message").innerHTML=apiKey?"Press <b>Start Jev Drive</b>.":"Connect Jev, then press <b>Start Jev Drive</b>.";
-  $("#start").disabled=!apiKey;$("#pause").disabled=true;draw();
-}
-function start(){
-  if(!apiKey||gameOver)return;
-  running=true;paused=false;$("#message").classList.add("hidden");$("#start").disabled=true;$("#pause").disabled=false;$("#pause").textContent="Pause";
-  if(!activeWave){activeWave=makeWave();requestDecision(activeWave)}
-  requestAnimationFrame(loop);
-}
-function togglePause(){
-  if(!running)return;
-  paused=!paused;$("#pause").textContent=paused?"Resume":"Pause";if(!paused){lastTs=0;requestAnimationFrame(loop)}
-}
-function setGoal(g){
-  goal=g;$("#goalFruit").classList.toggle("active",g==="fruit");$("#goalAnimal").classList.toggle("active",g==="animal");
-  if(activeWave&&!activeWave.decisionDone&&!activeWave.decisionPending)requestDecision(activeWave);
-}
-function moveManual(i){targetLane=i;playerLane=i;resizePlayerTarget()}
-function loop(ts){
-  if(!running||paused||gameOver)return;
-  if(!lastTs)lastTs=ts;
-  const dt=Math.min(.05,(ts-lastTs)/1000);lastTs=ts;
-  const targetX=laneX(targetLane);playerX+=(targetX-playerX)*Math.min(1,dt*9);
-  if(Math.abs(playerX-targetX)<3){playerX=targetX;playerLane=targetLane}
-  if(activeWave){
-    activeWave.y+=activeWave.speed*dt;
-    if(!activeWave.decisionDone&&!activeWave.decisionPending&&activeWave.y<.33)requestDecision(activeWave);
-    if(activeWave.y>=.82){
-      resolveWave(activeWave);
-      if(!gameOver){activeWave=makeWave();requestDecision(activeWave)}
-    }
+async function askJev(w){
+  const started=performance.now();
+  try{
+    const lanes={LEFT:w.lanes[0],CENTER:w.lanes[1],RIGHT:w.lanes[2]};
+    const r=await backend({action:"runner",apiKey,goal:w.goal,lanes});
+    const roundtrip=Math.round(performance.now()-started);
+    if(!wave||wave.id!==w.id)return;
+    const choiceIndex=laneKey.indexOf(r.choice);
+    if(choiceIndex<0)throw new Error("Unknown Jev lane: "+r.choice);
+    w.choice=choiceIndex;w.answered=true;w.probabilities=r.probabilities||{};
+    playerLane=choiceIndex;
+    decisionCount++;if(choiceIndex===w.oracle)correctCount++;
+    latencies.push(r.latencyMs);
+    $("#action").textContent=r.choice;
+    $("#latency").textContent=r.latencyMs+" ms";
+    $("#roundtrip").textContent=roundtrip+" ms";
+    $("#confidence").textContent=typeof r.confidence==="number"?(r.confidence*100).toFixed(1)+"%":"—";
+    $("#tokens").textContent=r.usage?.input_tokens??"—";
+    $("#decisionChip").textContent="Jev → "+r.choice+" · "+r.latencyMs+" ms";
+    $("#verdict").className="verdict "+(choiceIndex===w.oracle?"ok":"bad");
+    $("#verdict").textContent=(choiceIndex===w.oracle?"✓ Correct":"✕ Wrong")+" · Jev chose "+r.choice+". Oracle: "+laneNames[w.oracle]+".";
+    updateSession();renderLanes(w);
+  }catch(e){
+    if(!wave||wave.id!==w.id)return;
+    $("#decisionChip").textContent="Jev error";
+    $("#verdict").className="verdict bad";
+    $("#verdict").textContent="Jev error: "+e.message;
   }
-  draw();requestAnimationFrame(loop);
+}
+function resolveWave(){
+  if(!wave||wave.resolved)return;
+  wave.resolved=true;
+  let chosen=wave.choice;
+  if(chosen==null)chosen=Math.round(playerLaneVisual);
+  const obj=wave.lanes[chosen];
+  if(obj===wave.goal)score++;
+  else if(obj===avoided(wave.goal))lives--;
+  updateHud();renderLanes(wave);
+  if(lives<=0){
+    running=false;paused=false;
+    $("#start").textContent="Restart Jev";
+    $("#pause").disabled=true;
+    $("#decisionChip").textContent="Game over · score "+score;
+  }
+}
+function roadBounds(y){
+  const t=Math.max(0,Math.min(1,y/canvas.height));
+  const width=canvas.width*(0.28+0.66*t);
+  return[(canvas.width-width)/2,(canvas.width+width)/2];
+}
+function laneX(index,y){
+  const [l,r]=roadBounds(y),w=r-l;
+  return l+w*((index*2+1)/6);
+}
+function drawRoundedRect(x,y,w,h,r,fill){
+  const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.roundRect(x,y,w,h,rr);ctx.fillStyle=fill;ctx.fill();
 }
 function draw(){
-  const w=canvas.width,h=canvas.height;
-  ctx.clearRect(0,0,w,h);
-  const grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,"#151a20");grad.addColorStop(1,"#0c0f14");ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
-  ctx.fillStyle="#15120e";ctx.beginPath();ctx.moveTo(w*.08,0);ctx.lineTo(w*.92,0);ctx.lineTo(w, h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
-  ctx.strokeStyle="#ffffff26";ctx.lineWidth=4;ctx.setLineDash([20,24]);
-  for(let i=1;i<3;i++){const x=w*(.05+.3*i);ctx.beginPath();ctx.moveTo(w*.5+(x-w*.5)*.35,0);ctx.lineTo(x,h);ctx.stroke()}
-  ctx.setLineDash([]);
-  ctx.strokeStyle="#ffffff0f";ctx.lineWidth=2;
-  for(let y=80;y<h;y+=130){ctx.beginPath();ctx.moveTo(w*.05,y);ctx.lineTo(w*.95,y);ctx.stroke()}
-  if(activeWave){
-    const y=activeWave.y*h;
-    activeWave.items.forEach((it,i)=>{
-      const x=laneX(i);
-      if(it.type!=="empty"){ctx.font="68px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(it.emoji,x,y)}
-      else{ctx.fillStyle="#ffffff0c";ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);ctx.fill()}
-    });
-  }
-  const py=h*.83;
-  ctx.shadowColor="#7c3aed";ctx.shadowBlur=24;ctx.fillStyle="#e34b55";ctx.beginPath();ctx.arc(playerX||laneX(1),py,34,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-  ctx.fillStyle="#fff";ctx.font="bold 18px system-ui";ctx.textAlign="center";ctx.fillText("J",playerX||laneX(1),py+6);
-  ctx.fillStyle="#ffffff88";ctx.font="16px system-ui";ctx.fillText(goal==="fruit"?"GOAL: FRUIT":"GOAL: ANIMALS",w/2,36);
-}
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,"#0b1020");sky.addColorStop(.45,"#10111a");sky.addColorStop(1,"#08090d");ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
 
-$("#connect").onclick=async()=>{
-  const k=$("#apiKey").value.trim();if(!k)return $("#connectText").textContent="Paste your Lolipop API key first.";
-  $("#connect").disabled=true;$("#connectText").textContent="Connecting to real Jev…";
-  try{await backend({action:"connect",apiKey:k});apiKey=k;$("#apiKey").value="";$("#badge").textContent="Jev Live";$("#badge").className="badge live";$("#connectText").textContent="Connected to real typesafe/jev-latest.";$("#start").disabled=false;$("#message").innerHTML="Press <b>Start Jev Drive</b>."}
-  catch(e){apiKey="";$("#connectText").textContent="Connection failed: "+e.message}
+  const horizon=80;
+  const [lt,rt]=roadBounds(horizon),[lb,rb]=roadBounds(H);
+  ctx.beginPath();ctx.moveTo(lt,horizon);ctx.lineTo(rt,horizon);ctx.lineTo(rb,H);ctx.lineTo(lb,H);ctx.closePath();
+  const rg=ctx.createLinearGradient(0,horizon,0,H);rg.addColorStop(0,"#171b25");rg.addColorStop(1,"#0e1118");ctx.fillStyle=rg;ctx.fill();
+
+  ctx.strokeStyle="rgba(255,255,255,.08)";ctx.lineWidth=3;
+  for(const frac of [1/3,2/3]){
+    ctx.beginPath();
+    for(let y=horizon;y<=H;y+=18){
+      const [l,r]=roadBounds(y),x=l+(r-l)*frac;
+      if(((y-horizon)/18+Math.floor(performance.now()/90))%4<2){ctx.moveTo(x,y);ctx.lineTo(x,y+11);}
+    }
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle="rgba(124,58,237,.35)";ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(lt,horizon);ctx.lineTo(lb,H);ctx.moveTo(rt,horizon);ctx.lineTo(rb,H);ctx.stroke();
+
+  if(wave){
+    const y=horizon+(H*.74-horizon)*Math.max(0,wave.progress);
+    const scale=.52+Math.max(0,wave.progress)*.72;
+    for(let i=0;i<3;i++){
+      const x=laneX(i,y),obj=wave.lanes[i];
+      const radius=42*scale;
+      ctx.save();
+      ctx.globalAlpha=.98;
+      ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);
+      ctx.fillStyle=obj==="fruit"?"#3b1520":obj==="animal"?"#252019":"#131720";
+      ctx.fill();
+      ctx.strokeStyle=obj==="empty"?"#384050":"rgba(255,255,255,.16)";ctx.lineWidth=2;ctx.stroke();
+      ctx.font=Math.round(48*scale)+"px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText(objectEmoji[obj],x,y+2);
+      ctx.restore();
+    }
+  }
+
+  const py=H*.84,px=laneX(playerLaneVisual,py);
+  const glow=ctx.createRadialGradient(px,py,10,px,py,54);glow.addColorStop(0,"rgba(167,139,250,.55)");glow.addColorStop(1,"rgba(124,58,237,0)");ctx.fillStyle=glow;ctx.beginPath();ctx.arc(px,py,54,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(px,py,34,0,Math.PI*2);
+  const pg=ctx.createLinearGradient(px-20,py-25,px+20,py+25);pg.addColorStop(0,"#c4b5fd");pg.addColorStop(1,"#7c3aed");ctx.fillStyle=pg;ctx.fill();
+  ctx.fillStyle="#171220";ctx.beginPath();ctx.arc(px-11,py-5,3.5,0,Math.PI*2);ctx.arc(px+11,py-5,3.5,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="#171220";ctx.lineWidth=3;ctx.beginPath();ctx.arc(px,py+5,11,.15*Math.PI,.85*Math.PI);ctx.stroke();
+}
+function tick(now){
+  const dt=Math.min(50,now-lastTime);lastTime=now;
+  if(running&&!paused){
+    playerLaneVisual+=(playerLane-playerLaneVisual)*Math.min(1,dt*.012);
+    if(wave){
+      wave.progress+=dt/4300;
+      if(wave.progress>=.82&&!wave.resolved)resolveWave();
+      if(wave.progress>=1.04){
+        wave=null;nextSpawnAt=now+550;
+      }
+    }else if(now>=nextSpawnAt)spawnWave();
+  }else{
+    playerLaneVisual+=(playerLane-playerLaneVisual)*Math.min(1,dt*.012);
+  }
+  draw();requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+$("#connect").addEventListener("click",async()=>{
+  const k=$("#apiKey").value.trim();
+  if(!k){$("#connectText").textContent="Paste your Lolipop API key first.";return}
+  $("#connect").disabled=true;$("#connectText").textContent="Checking Jev…";
+  try{
+    await backend({action:"connect",apiKey:k});
+    apiKey=k;connected=true;$("#apiKey").value="";
+    $("#badge").textContent="Jev Live";$("#badge").className="badge live";
+    $("#connectText").textContent="Connected to real typesafe/jev-latest.";
+    $("#start").disabled=false;
+    $("#decisionChip").textContent="Ready · press Start Jev";
+  }catch(e){
+    apiKey="";connected=false;$("#connectText").textContent="Connection failed: "+e.message;
+  }
   $("#connect").disabled=false;
-};
-$("#start").onclick=start;$("#pause").onclick=togglePause;$("#restart").onclick=reset;$("#left").onclick=()=>moveManual(0);$("#center").onclick=()=>moveManual(1);$("#right").onclick=()=>moveManual(2);$("#goalFruit").onclick=()=>setGoal("fruit");$("#goalAnimal").onclick=()=>setGoal("animal");
-window.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")moveManual(Math.max(0,targetLane-1));if(e.key==="ArrowRight")moveManual(Math.min(2,targetLane+1))});
-reset();
+});
+$("#start").addEventListener("click",()=>{
+  if(!connected)return;
+  resetStats();running=true;paused=false;nextSpawnAt=performance.now()+250;
+  $("#start").textContent="Restart Jev";$("#pause").disabled=false;$("#pause").textContent="Pause";
+  $("#decisionChip").textContent="Starting…";
+});
+$("#pause").addEventListener("click",()=>{
+  if(!running)return;paused=!paused;$("#pause").textContent=paused?"Resume":"Pause";
+  $("#decisionChip").textContent=paused?"Paused":(wave?.answered?"Jev → "+laneNames[wave.choice]:"Jev thinking…");
+});
+$("#reset").addEventListener("click",()=>{
+  running=false;paused=false;resetStats();$("#pause").disabled=true;$("#start").textContent="Start Jev";
+  $("#decisionChip").textContent=connected?"Ready · press Start Jev":"Connect Jev to begin";
+});
+$("#goal").addEventListener("change",()=>{
+  if(running)$("#decisionChip").textContent="Goal switched · applies to next wave";
+});
+resetStats();
 </script>
 </body>
 </html>
