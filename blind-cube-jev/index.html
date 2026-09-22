@@ -68,7 +68,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
       <div class="note">Your Lolipop API key is kept only in this page's memory and forwarded to the Supabase proxy for each request. It is not written to localStorage or the database.</div>
       <div class="solver-actions">
         <button id="step" disabled>Next Jev move</button>
-        <button id="auto" disabled>Find Jev plan</button>
+        <button id="auto" disabled>Jev Macro Solve</button>
       </div>
       <div class="solver-actions">
         <button id="pause" disabled>Pause</button>
@@ -91,7 +91,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
   </div>
 
   <div class="privacy">Blind benchmark rule: shuffle moves are generated one-by-one, animated, applied, and immediately discarded — the full scramble sequence is never stored. After <b>Forget shuffle</b>, Jev receives the current 54-sticker cube state. A loop guard may remove only moves that would return to a state Jev already visited; it does not rank moves, use the scramble, or use a Rubik solver.</div>
-  <div class="foot">Plan mode uses Jev as a parallel ranking heuristic over legal future cube states, then animates the path only after a solution is found. It does not use the scramble history or a conventional Rubik solver. Because the search keeps only a Jev-ranked beam, the result is the shortest path found by that search, not a mathematical guarantee of the globally optimal Rubik solution.</div>
+  <div class="foot">Macro mode gives real Jev up to 234 legal 1–2 move continuations in a single decision. Jev chooses the macro itself, the cube executes it, and the process repeats from the new state. No scramble history or conventional Rubik solver is used. This tests Jev's high-cardinality decision speed; it does not mathematically guarantee the globally shortest Rubik solution.</div>
 </div>
 
 <script type="module">
@@ -450,100 +450,177 @@ async function nextJevMove(){
   }
 }
 $("#step").addEventListener("click",nextJevMove);
-async function findJevPlan(){
-  const started=performance.now();
-  const beamWidth=6;
-  const maxDepth=24;
-  let frontier=[{set:cloneStickerState(stickers),path:[],lastFace:""}];
-  const selectedSeen=new Set([faceletsFrom(frontier[0].set)]);
-  let rankedStates=0;
-  let rankCalls=0;
+const OPPOSITE_FACE={U:"D",D:"U",R:"L",L:"R",F:"B",B:"F"};
 
-  for(let depth=1;depth<=maxDepth&&autoRunning;depth++){
-    const dedupe=new Map();
+function buildMacroCandidates(){
+  const candidates=[];
+  const seen=new Set();
 
-    for(const node of frontier){
-      for(const mv of LEGAL){
-        if(mv[0]===node.lastFace)continue;
-        const nextSet=cloneStickerState(node.set);
-        applyLogical(nextSet,mv);
-        const fs=faceletsFrom(nextSet);
-        if(selectedSeen.has(fs)||dedupe.has(fs))continue;
-        const candidate={set:nextSet,path:[...node.path,mv],lastFace:mv[0],facelets:fs};
-        if(solvedFacelets(fs)){
-          const elapsed=Math.round(performance.now()-started);
-          $("#history").innerHTML='<span class="ok">Jev-guided plan found:</span> '+candidate.path.length+' moves · '+rankCalls+' Jev ranking calls · '+elapsed+' ms planning.';
-          return candidate.path;
-        }
-        dedupe.set(fs,candidate);
-      }
+  for(const first of LEGAL){
+    const one=cloneStickerState(stickers);
+    applyLogical(one,first);
+    const oneState=faceletsFrom(one);
+
+    if(!visitedStates.has(oneState)&&!seen.has(oneState)){
+      seen.add(oneState);
+      candidates.push({moves:[first],facelets:oneState});
     }
 
-    const candidates=[...dedupe.values()];
-    if(!candidates.length)break;
-    rankedStates+=candidates.length;
-    $("#history").textContent="Jev planning… depth "+depth+" · ranking "+candidates.length+" candidate cube states in parallel.";
+    for(const second of LEGAL){
+      const secondFace=second[0];
+      if(secondFace===first[0]||secondFace===OPPOSITE_FACE[first[0]])continue;
 
-    let ranked;
+      const two=cloneStickerState(one);
+      applyLogical(two,second);
+      const twoState=faceletsFrom(two);
+      if(visitedStates.has(twoState)||seen.has(twoState))continue;
+
+      seen.add(twoState);
+      candidates.push({moves:[first,second],facelets:twoState});
+    }
+  }
+
+  return candidates.slice(0,234);
+}
+
+function showMacroDecision(result,candidates,callNumber){
+  const moves=Array.isArray(result.moves)?result.moves:[];
+  $("#jevMove").textContent=moves.join(" ")||"—";
+
+  const conf=typeof result.confidence==="number"
+    ?(result.confidence*100).toFixed(1)+"%"
+    :"n/a";
+  const usage=result.usage&&result.usage.input_tokens
+    ?" · "+result.usage.input_tokens+" input tokens"
+    :"";
+
+  $("#jevMeta").textContent=
+    "typesafe/jev-latest · macro "+callNumber+
+    " · "+(result.candidateCount??candidates.length)+" candidates"+
+    " · "+result.latencyMs+" ms"+
+    " · confidence "+conf+
+    usage;
+
+  const entries=Object.entries(result.probabilities||{})
+    .sort((a,b)=>Number(b[1])-Number(a[1]))
+    .slice(0,5);
+
+  $("#probabilities").innerHTML="";
+  for(const [id,pRaw] of entries){
+    const index=Number(String(id).replace(/^c/,""));
+    const labelText=Number.isInteger(index)&&candidates[index]
+      ?candidates[index].moves.join(" ")
+      :String(id);
+    const p=Math.max(0,Math.min(1,Number(pRaw)||0));
+
+    const row=document.createElement("div");
+    row.className="bar";
+
+    const label=document.createElement("div");
+    label.textContent=labelText;
+
+    const track=document.createElement("div");
+    track.className="track";
+    const fill=document.createElement("div");
+    fill.className="fill";
+    fill.style.width=(p*100).toFixed(1)+"%";
+    track.appendChild(fill);
+
+    const percent=document.createElement("div");
+    percent.textContent=(p*100).toFixed(0)+"%";
+
+    row.append(label,track,percent);
+    $("#probabilities").appendChild(row);
+  }
+}
+
+function macroAnimationDuration(){
+  const speedValue=parseInt($("#speed").value,10);
+  if(speedValue===0)return 70;
+  if(speedValue<=300)return 110;
+  if(speedValue>=1400)return 320;
+  return 180;
+}
+
+async function runJevMacroSolve(){
+  const started=performance.now();
+  let macroCalls=0;
+  let evaluated=0;
+  const maxMacroCalls=80;
+
+  while(autoRunning&&!isSolvedState(stickers)&&macroCalls<maxMacroCalls){
+    const candidates=buildMacroCandidates();
+
+    if(!candidates.length){
+      $("#history").innerHTML='<span class="err">Macro search exhausted.</span> Every generated 1–2 move continuation would return to an already visited state.';
+      break;
+    }
+
+    evaluated+=candidates.length;
+    $("#history").textContent=
+      "Jev evaluating "+candidates.length+
+      " legal 1–2 move futures in one call…";
+
+    let result;
     try{
-      ranked=await callBackend({
-        action:"rank",
+      result=await callBackend({
+        action:"macro",
         apiKey:lolipopApiKey,
-        candidates:candidates.map(x=>({facelets:x.facelets,pathLength:x.path.length}))
+        candidates:candidates.map(c=>({
+          moves:c.moves,
+          facelets:c.facelets
+        }))
       });
     }catch(e){
-      $("#jevMeta").textContent="Jev planner error: "+e.message;
-      return null;
+      $("#jevMeta").textContent="Jev macro error: "+e.message;
+      break;
     }
-    rankCalls++;
 
-    const probs=ranked.probabilities||{};
-    const ordered=candidates
-      .map((candidate,i)=>({candidate,p:Number(probs["c"+i]??0)}))
-      .sort((a,b)=>b.p-a.p)
-      .slice(0,beamWidth);
+    macroCalls++;
+    showMacroDecision(result,candidates,macroCalls);
 
-    frontier=ordered.map(x=>x.candidate);
-    frontier.forEach(x=>selectedSeen.add(x.facelets));
+    const chosenMoves=Array.isArray(result.moves)?result.moves:[];
+    if(!chosenMoves.length){
+      $("#history").innerHTML='<span class="err">Jev returned an empty macro.</span>';
+      break;
+    }
 
-    const conf=typeof ranked.confidence==="number"?(ranked.confidence*100).toFixed(1)+"%":"n/a";
-    $("#jevMove").textContent="Plan d"+depth;
-    $("#jevMeta").textContent="typesafe/jev-latest · ranked "+candidates.length+" states in "+ranked.latencyMs+" ms · confidence "+conf+" · beam "+beamWidth;
-    showPlanningBars(ordered);
+    for(const mv of chosenMoves){
+      if(!autoRunning)break;
+      await performMove(mv,macroAnimationDuration(),true);
+      visitedStates.add(currentState());
+
+      if(isSolvedState(stickers)){
+        const elapsed=Math.round(performance.now()-started);
+        $("#history").innerHTML=
+          '<span class="ok">Solved by Jev Macro Solve.</span> '+
+          jevMoveCount+" cube moves · "+
+          macroCalls+" Jev calls · "+
+          evaluated+" candidate futures · "+
+          elapsed+" ms total.";
+        return;
+      }
+    }
   }
 
-  const elapsed=Math.round(performance.now()-started);
-  $("#history").innerHTML='<span class="err">No solution found in the Jev beam.</span> '+rankCalls+' Jev calls · '+rankedStates+' candidate states · '+elapsed+' ms. Try a shorter shuffle or run again.';
-  return null;
+  if(!isSolvedState(stickers)&&macroCalls>=maxMacroCalls){
+    const elapsed=Math.round(performance.now()-started);
+    $("#history").innerHTML=
+      '<span class="err">Stopped at the macro safety cap.</span> '+
+      macroCalls+" Jev calls · "+
+      jevMoveCount+" cube moves · "+
+      evaluated+" candidate futures · "+
+      elapsed+" ms.";
+  }
 }
-function showPlanningBars(ordered){
-  $("#probabilities").innerHTML="";
-  ordered.slice(0,5).forEach((entry,i)=>{
-    const p=Math.max(0,Math.min(1,entry.p||0));
-    const row=document.createElement("div");row.className="bar";
-    const label=document.createElement("div");label.textContent="#"+(i+1);
-    const track=document.createElement("div");track.className="track";
-    const fill=document.createElement("div");fill.className="fill";fill.style.width=(p*100).toFixed(1)+"%";track.appendChild(fill);
-    const percent=document.createElement("div");percent.textContent=(p*100).toFixed(0)+"%";
-    row.append(label,track,percent);$("#probabilities").appendChild(row);
-  });
-}
+
 $("#auto").addEventListener("click",async()=>{
   if(autoRunning)return;
-  autoRunning=true;updateUI();
-  const plan=await findJevPlan();
-  if(plan&&autoRunning){
-    $("#jevMove").textContent=plan.length+" moves";
-    $("#jevMeta").textContent="Jev plan ready — animating the complete path.";
-    for(const mv of plan){
-      if(!autoRunning)break;
-      await performMove(mv,70,true);
-    }
-    if(isSolvedState(stickers)){
-      $("#history").innerHTML='<span class="ok">Solved.</span> Jev-guided search found and executed a '+plan.length+'-move path.';
-    }
-  }
-  autoRunning=false;updateUI();
+  autoRunning=true;
+  updateUI();
+  await runJevMacroSolve();
+  autoRunning=false;
+  updateUI();
 });
 $("#pause").addEventListener("click",()=>{autoRunning=false;updateUI();});
 </script>
