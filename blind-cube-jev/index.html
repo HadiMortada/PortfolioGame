@@ -42,7 +42,7 @@ body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:14px 12px 28px}.
         <button id="reset">Reset</button>
         <select id="goal" class="goal" aria-label="Game goal">
           <option value="fruit">🍎 Eat fruit · avoid animals</option>
-          <option value="animal">🐷 Eat animals · avoid fruit</option>
+          <option value="animal">🐮 Eat animals · avoid fruit</option>
         </select>
       </div>
     </section>
@@ -101,7 +101,7 @@ const $=s=>document.querySelector(s);
 const canvas=$("#game"),ctx=canvas.getContext("2d");
 const laneNames=["LEFT","CENTER","RIGHT"];
 const laneKey=["LEFT","CENTER","RIGHT"];
-const objectEmoji={fruit:"🍎",animal:"🐷",empty:"·"};
+const objectEmoji={fruit:"🍎",animal:"🐮",empty:"·"};
 
 let apiKey="",connected=false,running=false,paused=false;
 let score=0,lives=3,waveNumber=0,decisionCount=0,correctCount=0,latencies=[];
