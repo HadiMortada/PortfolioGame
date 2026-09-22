@@ -87,7 +87,7 @@ body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:14px 12px 28px}.
       </div>
 
       <div class="links">
-        The LinkedIn video used a local <b>Jev-like</b> VLM head (~23 ms total). This game instead measures the actual hosted Jev API, so network latency is visible.<br>
+        On Netlify this game calls <b>real TypeSafe Jev</b> through Netlify AI Gateway with no Lolipop or Supabase hop. GitHub Pages remains a Lolipop fallback.<br>
         <a href="./decision-lab.html">Decision Lab</a> · <a href="./cube-stress-test.html">Rubik stress test</a>
       </div>
     </aside>
@@ -97,7 +97,8 @@ body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:14px 12px 28px}.
 </div>
 
 <script>
-const API_URL="https://gxxgicxsfuivqyjenvaw.supabase.co/functions/v1/blind-cube-jev-api";
+const NETLIFY_MODE=location.hostname.endsWith(".netlify.app")||new URLSearchParams(location.search).get("provider")==="netlify";
+const API_URL=NETLIFY_MODE?"/api/jev-runner":"https://gxxgicxsfuivqyjenvaw.supabase.co/functions/v1/blind-cube-jev-api";
 const $=s=>document.querySelector(s);
 const canvas=$("#game"),ctx=canvas.getContext("2d");
 const laneNames=["LEFT","CENTER","RIGHT"];
@@ -112,7 +113,8 @@ let requestSerial=0;
 function rand(max){if(crypto?.getRandomValues){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}return Math.floor(Math.random()*max)}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
 async function backend(body){
-  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const payload=NETLIFY_MODE?Object.fromEntries(Object.entries(body).filter(([k])=>k!=="apiKey")):body;
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
   const j=await r.json().catch(()=>({error:"Invalid server response"}));
   if(!r.ok)throw new Error(j.error+(j.details?" — "+JSON.stringify(j.details):""));
   return j;
@@ -302,15 +304,22 @@ function tick(now){
 }
 requestAnimationFrame(tick);
 
+if(NETLIFY_MODE){
+  $("#apiKey").style.display="none";
+  $("#connect").textContent="Connect Direct";
+  $("#connectText").textContent="Netlify AI Gateway mode: direct TypeSafe Jev credentials are injected server-side. No Lolipop key and no Supabase proxy.";
+}
 $("#connect").addEventListener("click",async()=>{
-  const k=$("#apiKey").value.trim();
-  if(!k){$("#connectText").textContent="Paste your Lolipop API key first.";return}
+  const k=NETLIFY_MODE?"":$("#apiKey").value.trim();
+  if(!NETLIFY_MODE&&!k){$("#connectText").textContent="Paste your Lolipop API key first.";return}
   $("#connect").disabled=true;$("#connectText").textContent="Checking Jev…";
   try{
-    await backend({action:"connect",apiKey:k});
+    const result=await backend({action:"connect",apiKey:k});
     apiKey=k;connected=true;$("#apiKey").value="";
-    $("#badge").textContent="Jev Live";$("#badge").className="badge live";
-    $("#connectText").textContent="Connected to real typesafe/jev-latest.";
+    $("#badge").textContent=NETLIFY_MODE?"Jev Direct":"Jev Live";$("#badge").className="badge live";
+    $("#connectText").textContent=NETLIFY_MODE
+      ?"Connected through Netlify AI Gateway → TypeSafe Jev · "+(result.latencyMs??"?")+" ms test."
+      :"Connected to real typesafe/jev-latest.";
     $("#start").disabled=false;
     $("#decisionChip").textContent="Ready · press Start Jev";
   }catch(e){
