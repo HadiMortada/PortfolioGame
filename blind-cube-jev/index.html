@@ -20,7 +20,7 @@ body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:14px 12px 28px}.
     <div>
       <div class="eyebrow">Real TypeSafe Jev game</div>
       <div class="title">Jev Runner</div>
-      <div class="sub">A 3-lane game inspired by the Unity demo you showed me. This version uses the real <b>typesafe/jev-latest</b> API: each wave is sent to Jev as a tiny structured state, Jev chooses LEFT/CENTER/RIGHT, and the player moves before the wave arrives.</div>
+      <div class="sub">A rapid 3-lane game inspired by the Unity demo you showed me. Every wave is sent to real <b>typesafe/jev-latest</b>. Waves run back-to-back with no artificial gap; if the game pauses at the decision line, that wait is the real Jev/API response time.</div>
     </div>
     <div id="badge" class="badge">Jev offline</div>
   </header>
@@ -174,6 +174,8 @@ async function askJev(w){
     const choiceIndex=laneKey.indexOf(r.choice);
     if(choiceIndex<0)throw new Error("Unknown Jev lane: "+r.choice);
     w.choice=choiceIndex;w.answered=true;w.probabilities=r.probabilities||{};
+    // Once Jev answers, immediately release the wave from the decision line.
+    w.progress=Math.max(w.progress,.40);
     playerLane=choiceIndex;
     decisionCount++;if(choiceIndex===w.oracle)correctCount++;
     latencies.push(r.latencyMs);
@@ -274,10 +276,17 @@ function tick(now){
   if(running&&!paused){
     playerLaneVisual+=(playerLane-playerLaneVisual)*Math.min(1,dt*.012);
     if(wave){
-      wave.progress+=dt/4300;
+      // Rapid mode: waves move continuously. If Jev has not answered yet,
+      // the wave waits at the decision line so any pause reflects real API latency.
+      if(wave.answered){
+        wave.progress+=dt/1250;
+      }else{
+        wave.progress=Math.min(.40,wave.progress+dt/900);
+      }
       if(wave.progress>=.82&&!wave.resolved)resolveWave();
-      if(wave.progress>=1.04){
-        wave=null;nextSpawnAt=now+550;
+      if(wave.progress>=1.02){
+        wave=null;
+        nextSpawnAt=now; // no artificial gap: next wave starts immediately
       }
     }else if(now>=nextSpawnAt)spawnWave();
   }else{
@@ -305,7 +314,7 @@ $("#connect").addEventListener("click",async()=>{
 });
 $("#start").addEventListener("click",()=>{
   if(!connected)return;
-  resetStats();running=true;paused=false;nextSpawnAt=performance.now()+250;
+  resetStats();running=true;paused=false;nextSpawnAt=performance.now()+30;
   $("#start").textContent="Restart Jev";$("#pause").disabled=false;$("#pause").textContent="Pause";
   $("#decisionChip").textContent="Starting…";
 });
