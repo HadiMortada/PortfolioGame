@@ -22,7 +22,8 @@
     "framer-motion": "^11.0.0",
     "lucide-react": "^0.427.0",
     "@typesafe-ai/sdk": "latest",
-    "@netlify/functions": "latest"
+    "@netlify/functions": "latest",
+    "@netlify/edge-functions": "latest"
   },
   "devDependencies": {
     "vite": "^5.0.0",
