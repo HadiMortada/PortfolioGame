@@ -25,7 +25,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
   <header class="top">
     <div>
       <div class="title">Blind Cube — Jev Challenge</div>
-      <div id="status" class="subtitle">Connect Cloudflare Jev, shuffle blindly, then lock the final cube state.</div>
+      <div id="status" class="subtitle">Connect Jev, shuffle blindly, then lock the final cube state.</div>
     </div>
     <div id="badge" class="badge">Jev offline</div>
   </header>
@@ -58,15 +58,14 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
     </section>
 
     <aside class="card">
-      <div class="section-title">Real Jev via Cloudflare Workers AI</div>
+      <div class="section-title">Real Jev — $0 via Lolipop AI Gateway</div>
       <div class="cred">
-        <input id="accountId" autocomplete="off" spellcheck="false" placeholder="Cloudflare Account ID">
         <div class="connect-row">
-          <input id="apiToken" type="password" autocomplete="off" spellcheck="false" placeholder="Workers AI API token">
+          <input id="apiToken" type="password" autocomplete="off" spellcheck="false" placeholder="Lolipop AI Gateway API key">
           <button id="connect">Connect</button>
         </div>
       </div>
-      <div class="note">Credentials are kept only in this page's memory and forwarded to the Supabase proxy for each request. This app does not write them to localStorage or the database.</div>
+      <div class="note">Your Lolipop API key is kept only in this page's memory and forwarded to the Supabase proxy for each request. It is not written to localStorage or the database.</div>
       <div class="solver-actions">
         <button id="step" disabled>Next Jev move</button>
         <button id="auto" disabled>Auto solve</button>
@@ -85,7 +84,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
         <div id="probabilities" class="bars"></div>
       </div>
       <div class="help">
-        Cloudflare setup: create a Workers AI API token and copy your Account ID. Jev is a third-party model and requires AI Gateway credits, or a provider key through BYOK.
+        $0 now: Lolipop AI Gateway is offering <b>typesafe/jev-latest</b> free through September 24, 2026. Create a free account, issue one API key, and paste it above. No coupon is required during the promotion.
       </div>
     </aside>
   </div>
@@ -235,8 +234,7 @@ function selfTest(){
 let stickers=initialStickers();
 let busy=false;
 let historyErased=false;
-let cloudflareAccount="";
-let cloudflareToken="";
+let lolipopApiKey="";
 let jevLive=false;
 let jevMoveCount=0;
 let autoRunning=false;
@@ -360,7 +358,7 @@ async function callBackend(payload){
 $("#connect").addEventListener("click",async()=>{
   const account=$("#accountId").value.trim(),token=$("#apiToken").value.trim();
   if(!account||!token){$("#jevMeta").textContent="Enter both Cloudflare Account ID and Workers AI API token.";return;}
-  $("#connect").disabled=true;$("#jevMeta").textContent="Connecting to Cloudflare Jev…";
+  $("#connect").disabled=true;$("#jevMeta").textContent="Connecting to Jev…";
   try{
     await callBackend({action:"connect",accountId:account,apiToken:token});
     cloudflareAccount=account;cloudflareToken=token;jevLive=true;
@@ -376,7 +374,7 @@ function showDecision(result,move){
   $("#jevMove").textContent=move;
   const conf=typeof result.confidence==="number"?(result.confidence*100).toFixed(1)+"%":String(result.confidence??"n/a");
   const usage=result.usage&&result.usage.input_tokens?" · "+result.usage.input_tokens+" input tokens":"";
-  $("#jevMeta").textContent="typesafe/jev · confidence "+conf+" · "+result.latencyMs+" ms"+usage;
+  $("#jevMeta").textContent="typesafe/jev-latest · confidence "+conf+" · "+result.latencyMs+" ms"+usage;
   const rows=Object.entries(result.probabilities||{}).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,5);
   $("#probabilities").innerHTML="";
   for(const[k,v]of rows){
@@ -394,7 +392,7 @@ async function nextJevMove(){
   if(jevMoveCount>=maxMoves){$("#jevMeta").textContent="Stopped at the 250-move safety cap.";return false;}
   const before=currentState();
   try{
-    const result=await callBackend({action:"decide",accountId:cloudflareAccount,apiToken:cloudflareToken,facelets:before});
+    const result=await callBackend({action:"decide",apiKey:lolipopApiKey,facelets:before});
     const mv=ID_TO_MOVE[result.choice];
     if(!mv)throw new Error("Unknown Jev move: "+result.choice);
     showDecision(result,mv);
