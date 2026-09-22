@@ -89,8 +89,8 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
     </aside>
   </div>
 
-  <div class="privacy">Blind benchmark rule: shuffle moves are generated one-by-one, animated, applied, and immediately discarded — the full scramble sequence is never stored. After <b>Forget shuffle</b>, every Jev request contains only the current 54-sticker cube state and the 18 legal face turns. No inverse-scramble logic and no conventional Rubik solver is used.</div>
-  <div class="foot">Jev is a structured decision model, so solving a full Rubik's Cube is intentionally a hard benchmark. If it loops or fails, the app reports that honestly.</div>
+  <div class="privacy">Blind benchmark rule: shuffle moves are generated one-by-one, animated, applied, and immediately discarded — the full scramble sequence is never stored. After <b>Forget shuffle</b>, Jev receives the current 54-sticker cube state. A loop guard may remove only moves that would return to a state Jev already visited; it does not rank moves, use the scramble, or use a Rubik solver.</div>
+  <div class="foot">Jev is a structured decision model, so solving a full Rubik's Cube is intentionally a hard benchmark. Loop prevention only blocks known repeats; Jev still chooses every actual move.</div>
 </div>
 
 <script type="module">
@@ -166,6 +166,7 @@ const MOVE_DEF={
 };
 const LEGAL=["U","U'","U2","R","R'","R2","F","F'","F2","D","D'","D2","L","L'","L2","B","B'","B2"];
 const ID_TO_MOVE={U:"U",U_PRIME:"U'",U2:"U2",R:"R",R_PRIME:"R'",R2:"R2",F:"F",F_PRIME:"F'",F2:"F2",D:"D",D_PRIME:"D'",D2:"D2",L:"L",L_PRIME:"L'",L2:"L2",B:"B",B_PRIME:"B'",B2:"B2"};
+const MOVE_TO_ID=Object.fromEntries(Object.entries(ID_TO_MOVE).map(([id,move])=>[move,id]));
 
 function initialStickers(){
   const s=[];
@@ -393,23 +394,39 @@ function showDecision(result,move){
     row.append(label,track,percent);$("#probabilities").appendChild(row);
   }
 }
+function cloneStickerState(set){
+  return set.map(st=>({c:st.c,p:[...st.p],n:[...st.n]}));
+}
+function allowedNonRepeatingMoveIds(){
+  const allowed=[];
+  for(const mv of LEGAL){
+    const test=cloneStickerState(stickers);
+    applyLogical(test,mv);
+    const next=faceletsFrom(test);
+    if(!visitedStates.has(next))allowed.push(MOVE_TO_ID[mv]);
+  }
+  return allowed;
+}
 async function nextJevMove(){
   if(!jevLive||!historyErased||busy||isSolvedState(stickers))return false;
   if(jevMoveCount>=maxMoves){$("#jevMeta").textContent="Stopped at the 250-move safety cap.";return false;}
   const before=currentState();
   try{
-    const result=await callBackend({action:"decide",apiKey:lolipopApiKey,facelets:before});
+    const allowedMoves=allowedNonRepeatingMoveIds();
+    if(!allowedMoves.length){
+      autoRunning=false;
+      $("#history").innerHTML='<span class="err">Loop guard exhausted.</span> Every single legal move would return to a state Jev already visited.';
+      updateUI();return false;
+    }
+    const blocked=18-allowedMoves.length;
+    const result=await callBackend({action:"decide",apiKey:lolipopApiKey,facelets:before,allowedMoves});
     const mv=ID_TO_MOVE[result.choice];
     if(!mv)throw new Error("Unknown Jev move: "+result.choice);
     showDecision(result,mv);
+    if(blocked>0)$("#jevMeta").textContent+=" · loop guard blocked "+blocked+" repeat move"+(blocked===1?"":"s");
     const moveDuration=Math.max(180,Math.min(500,(parseInt($("#speed").value,10)||800)*.35));
     await performMove(mv,moveDuration,true);
     const after=currentState();
-    if(visitedStates.has(after)){
-      autoRunning=false;
-      $("#history").innerHTML='<span class="err">Loop detected.</span> Jev returned to a cube state it had already visited.';
-      updateUI();return false;
-    }
     visitedStates.add(after);
     if(isSolvedState(stickers)){
       autoRunning=false;
