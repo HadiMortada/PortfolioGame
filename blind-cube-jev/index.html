@@ -25,7 +25,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
   <header class="top">
     <div>
       <div class="title">Blind Cube — Jev Challenge</div>
-      <div id="status" class="subtitle">Connect Cloudflare Jev, shuffle, then erase the shuffle history.</div>
+      <div id="status" class="subtitle">Connect Cloudflare Jev, shuffle blindly, then lock the final cube state.</div>
     </div>
     <div id="badge" class="badge">Jev offline</div>
   </header>
@@ -90,7 +90,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
     </aside>
   </div>
 
-  <div class="privacy">Benchmark rule: once you press <b>Forget shuffle</b>, the scramble array is destroyed. Every Jev request contains only the current 54-sticker cube state and the 18 legal face turns. No inverse scramble and no conventional Rubik solver is used.</div>
+  <div class="privacy">Blind benchmark rule: shuffle moves are generated one-by-one, animated, applied, and immediately discarded — the full scramble sequence is never stored. After <b>Forget shuffle</b>, every Jev request contains only the current 54-sticker cube state and the 18 legal face turns. No inverse-scramble logic and no conventional Rubik solver is used.</div>
   <div class="foot">Jev is a structured decision model, so solving a full Rubik's Cube is intentionally a hard benchmark. If it loops or fails, the app reports that honestly.</div>
 </div>
 
@@ -221,19 +221,19 @@ function applyLogical(set,mv){
   const m=moveParts(mv);
   for(let i=0;i<m.quarters;i++)rotateStickerSet(set,m.face,m.sign);
 }
-function inverseMove(m){return m.endsWith("2")?m:m.endsWith("'")?m[0]:m+"'";}
-
 function selfTest(){
-  const test=initialStickers();
-  const seq=["R","U","F2","L'","D","B2"];
-  seq.forEach(m=>applyLogical(test,m));
-  [...seq].reverse().map(inverseMove).forEach(m=>applyLogical(test,m));
-  return isSolvedState(test);
+  // Test cube mechanics without any inverse-sequence helper.
+  // Four quarter-turns of any face must return to the original solved state.
+  for(const face of ["U","R","F","D","L","B"]){
+    const test=initialStickers();
+    for(let i=0;i<4;i++)applyLogical(test,face);
+    if(!isSolvedState(test))return false;
+  }
+  return true;
 }
 
 let stickers=initialStickers();
 let busy=false;
-let scrambleHistory=null;
 let historyErased=false;
 let cloudflareAccount="";
 let cloudflareToken="";
@@ -298,7 +298,6 @@ function resetCube(){
   autoRunning=false;
   rebuildVisualCube();
   stickers=initialStickers();
-  scrambleHistory=null;
   historyErased=false;
   jevMoveCount=0;
   visitedStates=new Set();
@@ -325,25 +324,30 @@ $("#shuffle").addEventListener("click",async()=>{
   if(busy||autoRunning)return;
   resetCube();
   const n=Math.max(1,Math.min(40,parseInt($("#scrambleLen").value,10)||20));
-  scrambleHistory=[];
   let previousFace="";
+  const randomIndex=max=>{
+    if(globalThis.crypto?.getRandomValues){
+      const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max;
+    }
+    return Math.floor(Math.random()*max);
+  };
   for(let i=0;i<n;i++){
     const options=LEGAL.filter(m=>m[0]!==previousFace);
-    const mv=options[Math.floor(Math.random()*options.length)];
-    scrambleHistory.push(mv);
+    const mv=options[randomIndex(options.length)];
     previousFace=mv[0];
+    // The generated move is used once, animated/applied, and not appended to any history array.
     await performMove(mv,115,false);
   }
+  previousFace="";
   $("#forget").disabled=false;
-  $("#history").textContent="Shuffle complete: "+n+" animated random turns. Press Forget shuffle before Jev starts.";
+  $("#history").textContent="Shuffle complete: "+n+" random animated turns. The move sequence was never stored. Press Forget shuffle to lock the blind state.";
   updateUI();
 });
 $("#forget").addEventListener("click",()=>{
-  scrambleHistory=null;
   historyErased=true;
   visitedStates=new Set([currentState()]);
   $("#forget").disabled=true;
-  $("#history").innerHTML='<span class="ok">Shuffle history erased.</span> Jev requests now contain only the current 54-sticker state.';
+  $("#history").innerHTML='<span class="ok">Blind state locked.</span> The shuffle moves were never stored; Jev receives only the current 54-sticker state.';
   updateUI();
 });
 
