@@ -75,6 +75,7 @@ body{min-height:100vh}.app{max-width:980px;margin:0 auto;padding:14px 12px 28px}
         <select id="speed" aria-label="Solve speed">
           <option value="800">Normal</option>
           <option value="300">Fast</option>
+          <option value="0">Turbo</option>
           <option value="1400">Slow</option>
         </select>
       </div>
@@ -424,7 +425,8 @@ async function nextJevMove(){
     if(!mv)throw new Error("Unknown Jev move: "+result.choice);
     showDecision(result,mv);
     if(blocked>0)$("#jevMeta").textContent+=" · loop guard blocked "+blocked+" repeat move"+(blocked===1?"":"s");
-    const moveDuration=Math.max(180,Math.min(500,(parseInt($("#speed").value,10)||800)*.35));
+    const speedValue=parseInt($("#speed").value,10);
+    const moveDuration=speedValue===0?70:Math.max(180,Math.min(500,(Number.isFinite(speedValue)?speedValue:800)*.35));
     await performMove(mv,moveDuration,true);
     const after=currentState();
     visitedStates.add(after);
@@ -447,7 +449,9 @@ $("#auto").addEventListener("click",async()=>{
   while(autoRunning&&!isSolvedState(stickers)&&jevMoveCount<maxMoves){
     const go=await nextJevMove();
     if(!go)break;
-    await new Promise(r=>setTimeout(r,Math.max(80,parseInt($("#speed").value,10)||800)));
+    const speedValue=parseInt($("#speed").value,10);
+    const waitMs=speedValue===0?0:Math.max(80,Number.isFinite(speedValue)?speedValue:800);
+    if(waitMs>0)await new Promise(r=>setTimeout(r,waitMs));
   }
   autoRunning=false;updateUI();
 });
