@@ -20,7 +20,7 @@ body{min-height:100vh}.app{max-width:1080px;margin:auto;padding:14px 12px 28px}.
     <div>
       <div class="eyebrow">Real TypeSafe Jev game</div>
       <div class="title">Jev Runner</div>
-      <div class="sub">A true real-time 3-lane game. Each wave appears first, then that exact wave is sent to real <b>typesafe/jev-latest</b>. The wave never pauses or waits for the API. If Jev answers after the collision deadline, the result is counted as <b>LATE</b>.</div>
+      <div class="sub">A true real-time 3-lane game. Each wave appears first, then that exact wave is sent to real <b>typesafe/jev-latest</b>. The wave never pauses or waits for the API. Each decision has roughly <b>0.8 seconds</b> before collision; slower answers are counted as <b>LATE</b>.</div>
     </div>
     <div id="badge" class="badge">Jev offline</div>
   </header>
@@ -286,9 +286,10 @@ function tick(now){
     playerLaneVisual+=(playerLane-playerLaneVisual)*Math.min(1,dt*.016);
     if(wave){
       // True real-time mode: the wave NEVER waits for Jev.
-      // From spawn to leaving the screen is about 1.35 seconds.
-      wave.progress+=dt/1250;
-      if(wave.progress>=.82&&!wave.resolved)resolveWave();
+      // About 0.77 s from first appearance to the collision deadline,
+      // and about 1.0 s total on screen.
+      wave.progress+=dt/900;
+      if(wave.progress>=.78&&!wave.resolved)resolveWave();
       if(wave.progress>=1.02){
         wave=null;
         nextSpawnAt=now;
@@ -319,7 +320,7 @@ $("#connect").addEventListener("click",async()=>{
 });
 $("#start").addEventListener("click",()=>{
   if(!connected)return;
-  resetStats();running=true;paused=false;nextSpawnAt=performance.now()+30;
+  resetStats();running=true;paused=false;nextSpawnAt=performance.now()+5;
   $("#start").textContent="Restart Jev";$("#pause").disabled=false;$("#pause").textContent="Pause";
   $("#decisionChip").textContent="Starting…";
 });
