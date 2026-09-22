@@ -356,19 +356,25 @@ async function callBackend(payload){
   return data;
 }
 $("#connect").addEventListener("click",async()=>{
-  const account=$("#accountId").value.trim(),token=$("#apiToken").value.trim();
-  if(!account||!token){$("#jevMeta").textContent="Enter both Cloudflare Account ID and Workers AI API token.";return;}
-  $("#connect").disabled=true;$("#jevMeta").textContent="Connecting to Jev…";
+  const token=$("#apiToken").value.trim();
+  if(!token){$("#jevMeta").textContent="Paste your Lolipop AI Gateway API key first.";return;}
+  $("#connect").disabled=true;
+  $("#jevMeta").textContent="Connecting to Jev through Lolipop…";
   try{
-    await callBackend({action:"connect",accountId:account,apiToken:token});
-    cloudflareAccount=account;cloudflareToken=token;jevLive=true;
-    $("#accountId").value="";$("#apiToken").value="";
-    $("#jevMeta").textContent="Connected to real typesafe/jev on Cloudflare Workers AI.";
+    const info=await callBackend({action:"connect",apiKey:token});
+    lolipopApiKey=token;
+    jevLive=true;
+    $("#apiToken").value="";
+    $("#jevMeta").textContent=info.hasJev===false
+      ?"Connected, but this API key does not currently list a probabilistic-decision model. Check model permissions."
+      :"Connected to real typesafe/jev-latest through Lolipop AI Gateway.";
   }catch(e){
-    cloudflareAccount="";cloudflareToken="";jevLive=false;
+    lolipopApiKey="";
+    jevLive=false;
     $("#jevMeta").textContent="Connection failed: "+e.message;
   }
-  $("#connect").disabled=false;updateUI();
+  $("#connect").disabled=false;
+  updateUI();
 });
 function showDecision(result,move){
   $("#jevMove").textContent=move;
